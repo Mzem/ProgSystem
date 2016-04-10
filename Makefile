@@ -2,10 +2,10 @@ all: reduction
 
 run:	reduction
 		./reduction
-		
+
 reduction: 	main.o chef.o fonctions.o directeur.o
-			gcc -g -Wall main.o chef.o fonctions.o directeur.o -o reduction
-		
+			gcc -g -Wall main.o chef.o fonctions.o directeur.o -o reduction -lpthread
+
 main.o:	main.c 	directeur.h  
 		gcc -c -Wall main.c
 
