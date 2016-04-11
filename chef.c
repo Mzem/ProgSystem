@@ -4,12 +4,28 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <pthread.h>
 
 #include "fonctions.h"
 
 //changer l'emplacement de la déclaration (ne laisser que dans un .h)
 enum{MIN, MAX, SUM, AVG, ODD};
+
+int recherche_operation(char *cmd)
+{
+	if(!strcmp(cmd, "min"))
+		return 0;
+	if(!strcmp(cmd, "max"))
+		return 1;
+	if(!strcmp(cmd, "sum"))
+		return 2;
+	if(!strcmp(cmd, "avg"))
+		return 3;
+	if(!strcmp(cmd, "odd"))
+		return 4;
+	return -1;
+}
 
 int creaEmployes(void *(*fct) (void *), int nb_thr, void *arg)
 {
@@ -27,8 +43,9 @@ int creaEmployes(void *(*fct) (void *), int nb_thr, void *arg)
 	//possibilite ajout var dans join, pour eventuelles erreurs
 	for (i = 0; i < nb_thr; i++)
 		pthread_join(thr[i], NULL);
-		
-	//return getResultat((struct donnee *) arg);
+	
+	return 0;	
+	//return getResultat((inf *) arg);
 }
 
 void chef(char *cheminFic, char *cmd)
@@ -72,11 +89,3 @@ void chef(char *cheminFic, char *cmd)
 	close(fd);
 	exit(EXIT_SUCCESS);
 }
-
-/* struct inf{
-		int debut;		//indices dans le tableau de ou à ou chercher le max
-		int nbElt;		//nombre éléments
-		int resultat;	//stocker le résultat
-		pthread_t thr;	//entier, avoir l'info du thread en cours
-		int fd;			//descripteur du fichier utilisé
-} */
