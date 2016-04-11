@@ -4,17 +4,14 @@
 
 #endif
 
+void* min(void* arg);
 
-int min();
+void* max(void* arg);
 
-int max();
+void* sum(void* arg);
 
-int avg();
+void* avg(void* arg);
 
-int sum();
+void* odd(void* arg);
 
-int odd();
 
-int recherche_operation(char* ch);
-
-int fonction(int indice_operation,int tab[],int taille);
