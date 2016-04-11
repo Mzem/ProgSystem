@@ -9,8 +9,9 @@ struct inf{
 	int nb_elements;		//doit etre inferieur a 100
 	double retour;		//stocker le resultat du calcul
 	pthread_t thr;	//entier, avoir l'info du thread en cours
-	pthread_mutex_t *mut_fic; //pour protéger la lecture du fichier
-	pthread_mutex_t *mut_ret; //pour protéger la valeur de retour
+	pthread_mutex_t mut_fic; //pour protéger la lecture du fichier
+	pthread_mutex_t mut_ret; //pour protéger la valeur de retour
+	pthread_mutex_t mut_nb;  //pour protéger le nb_elements
 };
 typedef struct inf inf;
 
