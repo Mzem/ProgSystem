@@ -6,10 +6,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include "donnees.h"
 
-
-
-<<<<<<< HEAD
 char getchar2(int fd){
 	static char buf[1024];
 	static int ncar=0;
@@ -30,18 +28,6 @@ void myfgets(char* ch,int fd){
 	}
 	*ch='\0';
 }
-=======
-struct inf{
-	int fd;		//pointeur sur le debut (a part  la premiere ligne a gerer par sonny)
-	int nb_elements;		//doit etre inferieur a 100
-	double retour;		//stocker le resultat du calcul
-	pthread_t thr;	//entier, avoir l'info du thread en cours
-	pthread_mutex_t mut_fic; //pour protéger la lecture du fichier
-	pthread_mutex_t mut_ret; //pour protéger la valeur de retour
-	pthread_mutex_t mut_nb;  //pour protéger le nb_elements
-};
-typedef struct inf inf;
->>>>>>> 4d644be4b90f008d5ca205e65b0fc28316032577
 
 void* min(void* arg)
 {

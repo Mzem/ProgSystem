@@ -14,7 +14,9 @@
 
 #endif
 
-enum{MIN, MAX, SUM, AVG, ODD};
+void init_arg(inf *arg);
+
+int recup_nbreValeur(int fd);
 
 /* Retourne l'entier (voir enum) corrspondant à la commande donnée*/
 int recherche_operation(char *cmd);

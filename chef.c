@@ -9,8 +9,9 @@
 
 #include "fonctions.h"
 
-//changer l'emplacement de la déclaration (ne laisser que dans un .h)
-enum{MIN, MAX, SUM, AVG, ODD};
+void init_arg(inf *arg);
+
+int recup_nbreValeur(int fd);
 
 int recherche_operation(char *cmd)
 {
@@ -34,10 +35,8 @@ int creaEmployes(void *(*fct) (void *), int nb_thr, void *arg)
 	
 	for (i = 0; i < nb_thr; i++)
 	{
-		//maj indices de arg a ajouter
 		pthread_create(thr + i, NULL, fct, arg);
 		//arg est modifie par les threads
-		//besoin mutex pour proteger resultat dans fonctions
 	}
 	
 	//possibilite ajout var dans join, pour eventuelles erreurs
@@ -60,9 +59,10 @@ void chef(char *cheminFic, char *cmd)
 	
 	//recuperation taille fichier, determination nbre thread à utiliser
 	int nb_thr = 0;
-	//a faire proprement
 	void *arg = NULL;
-	//struct donnee *arg = init_struct();
+	
+	init_arg(arg, fd);
+	nb_thr = recup_nbreValeurs(fd);
 	
 	//recup commande, lancement threads
 	switch(recherche_operation(cmd))

@@ -4,6 +4,10 @@
 
 #endif
 
+char getchar2(int fd);
+
+void myfgets(char* ch,int fd)
+
 void* min(void* arg);
 
 void* max(void* arg);
