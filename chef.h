@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include <pthread.h>
 
 #include "fonctions.h"
@@ -14,6 +15,9 @@
 #endif
 
 enum{MIN, MAX, SUM, AVG, ODD};
+
+/* Retourne l'entier (voir enum) corrspondant à la commande donnée*/
+int recherche_operation(char *cmd);
 
 /* Fonction qui va créer nb_thr threads exécutant
  * la commande fct, et retourne la solution*/
