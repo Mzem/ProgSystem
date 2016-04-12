@@ -1,20 +1,35 @@
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <pthread.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 
-struct inf{
-	int fd;		//pointeur sur le debut (a part  la premiere ligne a gerer par sonny)
-	int nb_elements;		//doit etre inferieur a 100
-	double retour;		//stocker le resultat du calcul
-	pthread_t thr;	//entier, avoir l'info du thread en cours
-	pthread_mutex_t *mut_fic; //pour protéger la lecture du fichier
-	pthread_mutex_t *mut_ret; //pour protéger la valeur de retour
-};
-typedef struct inf inf;
 
-void myfgets(char* ch,int nb,int fd){;}
+char getchar2(int fd){
+	static char buf[1024];
+	static int ncar=0;
+	static char* p;
+	if(ncar==0){
+		ncar=read(fd,buf,1024);
+		p=buf;
+	}
+	return (ncar-->0)? *p++ : EOF;
+}
+
+void myfgets(char* ch,int fd){
+	int x;
+	x=getchar2(fd);
+	while((x!='\n')&&(x!='\0')){
+		*ch++=x;
+		x=getchar2(fd);
+	}
+	*ch='\0';
+}
+
 void* min(void* arg)
 {
 	inf* minimum = (inf*) arg;
@@ -24,7 +39,7 @@ void* min(void* arg)
 	minimum->retour = 50;//a modifier(prend la premiere valeur pour min et max 0pour les autres)
 	for (i = 0; i <minimum->nb_elements ; i++)
 		{//remplissage et comparaison en meme temps
-			myfgets(ch,10,minimum->fd);
+			myfgets(ch,minimum->fd);
 			buf[i]=atof(ch);
 			if (buf[i] < minimum->retour)
 				minimum->retour = buf[i];
@@ -41,7 +56,7 @@ void* max(void* arg)
 	maximum->retour = 0;//a modifier(prend la premiere valeur pour min et max 0pour les autres)
 	for (i = 0; i <maximum->nb_elements ; i++)
 		{//remplissage et comparaison en meme temps
-			myfgets(ch,10,maximum->fd);
+			myfgets(ch,maximum->fd);
 			buf[i]=atof(ch);
 			if (buf[i] > maximum->retour)
 				maximum->retour = buf[i];
@@ -58,7 +73,7 @@ void* sum(void* arg)
 	somme->retour = 0;
 	for (i = 0; i <somme->nb_elements ; i++)
 		{//remplissage et comparaison en meme temps
-			myfgets(ch,10,somme->fd);
+			myfgets(ch,somme->fd);
 			buf[i]=atof(ch);
 			somme->retour += buf[i];
 		}
@@ -74,7 +89,7 @@ void* avg(void* arg)
 	avg->retour = 0;
 	for (i = 0; i <avg->nb_elements ; i++)
 		{//remplissage et comparaison en meme temps
-			myfgets(ch,10,avg->fd);
+			myfgets(ch,avg->fd);
 			buf[i]=atof(ch);
 			avg->retour += buf[i];
 		}
@@ -91,7 +106,7 @@ void* odd(void* arg)
 	odd->retour = 0;
 	for (i = 0; i <odd->nb_elements ; i++)
 		{//remplissage et comparaison en meme temps
-			myfgets(ch,10,odd->fd);
+			myfgets(ch,odd->fd);
 			buf[i]=atoi(ch);
 			if(buf[i]%2==1)
 				odd->retour += 1;
