@@ -1,17 +1,10 @@
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <pthread.h>
-
 #include "fonctions.h"
+#include "donnees.h"
 
-void init_arg(inf *arg);
 
-int recup_nbreValeur(int fd);
+void init_arg(inf *arg,int fd){int i=0; i++;}
+
+int recup_nbreValeurs(int fd){return 5;}
 
 int recherche_operation(char *cmd)
 {
