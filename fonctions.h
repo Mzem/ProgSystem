@@ -1,8 +1,4 @@
-#ifndef DEF_DEF
-#define DEF_DEF
 
-
-#endif
 
 char getchar2(int fd);
 
