@@ -1,22 +1,18 @@
+#include "donnees.h"
 #include "directeur.h"
+
 
 int main(int argc, char* argv[]) 
 {
-	int n=argc-2;//nombre de fichiers
 	if(argc < 3) //pas d'operation ou pas de fichier
 	{
-		fprintf(stderr, "le nombre d'arguments est insuffisant\n");
-		exit(EXIT_FAILURE);
+		fprintf(stderr,"Erreur : le fils n'a pas quitte\n");
+		return EXIT_FAILURE;
 	}
 	
-	if(!fork())
-	{
-		//directeur( arguments eventuels ); fonction principale de malek
-	}
-	else
-	{
-		wait(NULL); //argument éventuel pour traitement de l'erreur
-	}
+	int resultats[N];	//Tableau qui stocke les resultats des N processus
 	
-	return 0;
+	directeur(resultats,argv);	//Cree les N processus qui inscrivent leurs resultats dans le tableau resultats[]
+	
+	return EXIT_SUCCESS;
 }
