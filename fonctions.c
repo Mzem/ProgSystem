@@ -1,4 +1,4 @@
-#include "donnees.h"
+#include "fonctions.h"
 
 char getchar2(int fd){
 	static char buf[1024];
