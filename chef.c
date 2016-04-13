@@ -1,4 +1,4 @@
-#include "fonctions.h"
+#include "chef.h"
 
 void init_arg(inf *arg,int fd){int i=0; i++;}
 
