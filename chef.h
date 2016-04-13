@@ -1,11 +1,4 @@
-#ifndef DEF_DEF1
-#define DEF_DEF1
-
 #include "fonctions.h"
-#include "donnees.h"
-
-
-#endif
 
 void init_arg(inf *arg);
 
