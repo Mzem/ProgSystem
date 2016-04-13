@@ -1,6 +1,4 @@
 #include "fonctions.h"
-#include "donnees.h"
-
 
 void init_arg(inf *arg,int fd){int i=0; i++;}
 
