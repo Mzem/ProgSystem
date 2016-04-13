@@ -1,4 +1,4 @@
-
+#include "donnees.h"
 
 char getchar2(int fd);
 
