@@ -6,7 +6,7 @@ int main(int argc, char* argv[])
 {
 	if(argc < 3) //pas d'operation ou pas de fichier
 	{
-		fprintf(stderr,"Erreur : le fils n'a pas quitte\n");
+		fprintf(stderr,"Erreur : arguments manquants\n");
 		return EXIT_FAILURE;
 	}
 	
