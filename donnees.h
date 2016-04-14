@@ -12,8 +12,6 @@
 #include <pthread.h>
 #include <errno.h>
 
-#define N 4	//Nombre de processus
-
 
 enum{MIN, MAX, SUM, AVG, ODD};
 

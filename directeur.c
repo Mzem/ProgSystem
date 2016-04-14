@@ -16,13 +16,13 @@ pid_t creerProcessus()
 	return pid;
 }
 
-void directeur(int resultats[], char* argv[])
-{	//Appelle N processus fils qui appellent chef et renvoient un resultat qui sera stocke dans le tableau resultats[]
+void directeur(int resultats[], int nombreDeProcessus, char* argv[])
+{	//Appelle nombreDeProcessus processus fils qui appellent chef et renvoient un resultat qui sera stocke dans le tableau resultats[]
 	int i;
 	int resultat = 0;	//Entier stockant le resultat de l'operation de chaque processus fils
 	
-	//Reduction en N processus et lancement des chefs
-	for (i = 0; i < N; i++)
+	//Reduction en nombreDeProcessus processus et lancement des chefs
+	for (i = 0; i < nombreDeProcessus; i++)
 	{
 		pid_t pid = creerProcessus();
 		
@@ -46,8 +46,8 @@ void directeur(int resultats[], char* argv[])
 		}
 	}
 	
-	//Synchronisation avec les N processus
-	for (i = 0; i < N; i++)
+	//Synchronisation avec les nombreDeProcessus processus
+	for (i = 0; i < nombreDeProcessus; i++)
 	{
 		int status;
 		

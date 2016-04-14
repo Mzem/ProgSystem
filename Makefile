@@ -6,7 +6,7 @@ run:	reduction
 reduction: 	main.o chef.o fonctions.o directeur.o
 			gcc -g -Wall main.o chef.o fonctions.o directeur.o -o reduction -lpthread
 
-main.o:	main.c 	donnees.h directeur.h  
+main.o:	main.c 	directeur.h  
 		gcc -c -Wall main.c
 
 directeur.o:	directeur.c donnees.h chef.h
