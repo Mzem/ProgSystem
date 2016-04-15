@@ -15,9 +15,11 @@ inf *init_arg(inf *arg, int fd)
 
 int recup_nbreValeurs(int fd)
 {
-	char *ch = NULL;
+	int nb;
+	char *ch = malloc(sizeof(char));
 	myfgets(ch, fd);
-	return atoi(ch);
+	nb = atoi(ch);
+	return nb;
 }
 
 int recherche_operation(char *cmd)
