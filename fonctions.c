@@ -21,6 +21,9 @@ void myfgets(char* ch,int fd){
 	*ch='\0';
 }
 
+//############ MODIFIER nb_elements n'existe plus
+//############ MODIFIER mettre *minimum->retour, car on a un pointeur sur double
+//############ MODIFIER mutex_lock(&mut) et mutex_unlock(&mut), pour le retour et la lecture fic
 void* min(void* arg)
 {
 	inf* minimum = (inf*) arg;

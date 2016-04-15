@@ -1,7 +1,4 @@
-#include "donnees.h"
-#include "chef.h"
-
-//Creer des fonctions simples min max sum avg odd qui rassemblent les resultats ?
+#include "directeur.h"
 
 pid_t creerProcessus()
 {
@@ -39,13 +36,15 @@ void directeur(int resultats[], int nombreDeProcessus, char* argv[])
 			printf("Je suis le processus n°%d\n",i+1);
 			
 			//La fonction chef ne retourne pas encore de resultat, je veux le stocker dans la variable resultat
-			//resultat = chef(argv[i+2],argv[1]);
+			//resultat = chef(argv[i+1],argv[0]);
 			
 			//Code retour qui renvoie le resultat de l'operation, de cette facon le resultat sera retourne au pere
 			exit(resultat);
 		}
 	}
 	
+	//######### Gestion des waits() bien, mais tableau resultat à retirer, on fera ca ensmeble
+	//######### En gros recup resultat sera : do{ directeur(1, {"resultats.txt"}) }while( resultat != solution globale )
 	//Synchronisation avec les nombreDeProcessus processus
 	for (i = 0; i < nombreDeProcessus; i++)
 	{

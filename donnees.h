@@ -16,11 +16,10 @@
 enum{MIN, MAX, SUM, AVG, ODD};
 
 struct inf{
-	int fd;		//pointeur sur le debut (a part  la premiere ligne a gerer par sonny)
-	pthread_t thr;	//entier, avoir l'info du thread en cours
-	double retour;		//stocker le resultat du calcul
-	pthread_mutex_t mut_fic; //pour protéger la lecture du fichier
-	pthread_mutex_t mut_ret; //pour protéger la valeur de retour
+	int fd;					//descripteur du fichier sur lequel on travail
+	double *retour;			//stocker le resultat du calcul
+	pthread_mutex_t mut_fic;//pour protéger la lecture du fichier
+	pthread_mutex_t mut_ret;//pour protéger la valeur de retour
 };
 typedef struct inf inf;
 

@@ -1,8 +1,24 @@
 #include "chef.h"
 
-void init_arg(inf *arg,int fd){int i=0; i++;}
+inf *init_arg(inf *arg, int fd)
+{
+	pthread_mutex_t mut_fic = PTHREAD_MUTEX_INITIALIZER;
+	pthread_mutex_t mut_ret = PTHREAD_MUTEX_INITIALIZER;
+	
+	arg->fd = fd;
+	arg->mut_fic = mut_fic;
+	arg->mut_ret = mut_ret;
+	arg->retour = NULL;
+	
+	return arg;
+}
 
-int recup_nbreValeurs(int fd){return 5;}
+int recup_nbreValeurs(int fd)
+{
+	char *ch = NULL;
+	myfgets(ch, fd);
+	return atoi(ch);
+}
 
 int recherche_operation(char *cmd)
 {
@@ -19,28 +35,24 @@ int recherche_operation(char *cmd)
 	return -1;
 }
 
-int creaEmployes(void *(*fct) (void *), int nb_thr, void *arg)
+void creaEmployes(void *(*fct) (void *), int nb_thr, void *arg)
 {
 	int i;
 	pthread_t thr[nb_thr];
 	
+	inf *s = (inf *) arg;
 	for (i = 0; i < nb_thr; i++)
-	{
-		pthread_create(thr + i, NULL, fct, arg);
-		//arg est modifie par les threads
-	}
+		pthread_create(thr + i, NULL, fct, s);
 	
 	//possibilite ajout var dans join, pour eventuelles erreurs
+	//ou alors le nombre d'éléments lus par le thread pour comparer
+	//à la première ligne du fichier (gestion d'erreur)
 	for (i = 0; i < nb_thr; i++)
 		pthread_join(thr[i], NULL);
-	
-	return 0;	
-	//return getResultat((inf *) arg);
 }
 
 void chef(char *cheminFic, char *cmd)
 {
-	//Ouverture du fichier donné en argument
 	int fd = open(cheminFic, O_RDONLY);
 	if(fd < 0)
 	{
@@ -48,35 +60,28 @@ void chef(char *cheminFic, char *cmd)
 		exit(EXIT_FAILURE);
 	}
 	
-	//recuperation taille fichier, determination nbre thread à utiliser
-	int nb_thr = 0;
-	void *arg = NULL;
+	inf *arg = NULL;
+	arg = init_arg(arg, fd);
 	
-	init_arg(arg, fd);
-	nb_thr = recup_nbreValeurs(fd);
-	
-	//recup commande, lancement threads
 	switch(recherche_operation(cmd))
 	{
-		//ne compile pas encore car les fonctions.h ne sont pas encore au format void * fct(void *)
-		case(MIN) : creaEmployes(min, nb_thr, arg); break;
-		case(MAX) : creaEmployes(max, nb_thr, arg); break;
-		case(SUM) : creaEmployes(sum, nb_thr, arg); break;
-		case(AVG) : creaEmployes(avg, nb_thr, arg); break;
-		case(ODD) : creaEmployes(odd, nb_thr, arg); break;
+		case(MIN) : creaEmployes(min, recup_nbreValeurs(fd), arg); break;
+		case(MAX) : creaEmployes(max, recup_nbreValeurs(fd), arg); break;
+		case(SUM) : creaEmployes(sum, recup_nbreValeurs(fd), arg); break;
+		case(AVG) : creaEmployes(avg, recup_nbreValeurs(fd), arg); break;
+		case(ODD) : creaEmployes(odd, recup_nbreValeurs(fd), arg); break;
 		default :
 		{
 			fprintf(stderr, "Erreur commande non trouvée %s\n", cmd);
 			break;
 		}
-	}	
+	}
 	
-	//Retour au proc directeur la solution du fichier + nb élémemnts (avg)
-	//Communication par pipes ?
+	//#### possibilite main ou directeur appelle un truc creat(O_RDWR); ou mkfifo("/tmp/resultats", r+w);
+	//#### rajouter un truc du genre : communiqueResultat(arg, fic créé (ligne au dessus));
 	
-	//libération des ressources, terminaison du processus
-	//au cas ou on malloc pour la structure
-	//libereMem(arg);
+	if(arg->retour != NULL)
+		free(arg->retour);
 	close(fd);
 	exit(EXIT_SUCCESS);
 }

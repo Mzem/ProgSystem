@@ -3,13 +3,13 @@ all: reduction
 run:	reduction
 		./reduction
 
-reduction: 	main.o chef.o fonctions.o directeur.o
+reduction: 	main.o directeur.o chef.o fonctions.o
 			gcc -g -Wall main.o chef.o fonctions.o directeur.o -o reduction -lpthread
 
 main.o:	main.c 	directeur.h  
 		gcc -c -Wall main.c
 
-directeur.o:	directeur.c donnees.h chef.h
+directeur.o:	directeur.c directeur.h
 				gcc -c -Wall directeur.c
 
 chef.o: 	chef.c 	chef.h
