@@ -22,7 +22,6 @@ void myfgets(char* ch,int fd){
 }
 
 
-//############ MODIFIER mutex_lock(&mut) et mutex_unlock(&mut), pour le retour et la lecture fic
 void* min(void* arg)
 {
 	inf* minimum = (inf*) arg;
@@ -31,10 +30,15 @@ void* min(void* arg)
 	*minimum->retour = 50;//a modifier(prend la premiere valeur pour min et max 0pour les autres)
 	while(ch[0]!='\0')
 		{//remplissage et comparaison en meme temps
+			pthread_mutex_lock(minimum->mut_fic);
 			myfgets(ch,minimum->fd);
+			pthread_mutex_unlock(minimum->mut_fic);
 			x=atof(ch);
-			if (x < *minimum->retour)
+			if (x < *minimum->retour){
+				pthread_mutex_lock(minimum->mut_ret);
 				*minimum->retour = x;
+				pthread_mutex_unlock(minimum->mut_ret);
+			}
 		}
 	pthread_exit(NULL);
 }
@@ -47,10 +51,15 @@ void* max(void* arg)
 	maximum->retour = 0;//a modifier(prend la premiere valeur pour min et max 0pour les autres)
 	while(ch[0]!='\0')
 		{//remplissage et comparaison en meme temps
+			pthread_mutex_lock(maximum->mut_fic);
 			myfgets(ch,maximum->fd);
+			pthread_mutex_unlock(maximum->mut_fic);
 			x=atof(ch);
-			if (x > *maximum->retour)
+			if (x > *maximum->retour){
+				pthread_mutex_lock(maximum->mut_ret);
 				*maximum->retour = x;
+				pthread_mutex_unlock(maximum->mut_ret);
+			}
 		}
 	pthread_exit(NULL);
 }
@@ -63,9 +72,13 @@ void* sum(void* arg)
 	somme->retour = 0;
 	while(ch[0]!='\0')
 		{//remplissage et comparaison en meme temps
+			pthread_mutex_lock(somme->mut_fic);
 			myfgets(ch,somme->fd);
+			pthread_mutex_unlock(somme->mut_fic);
 			x=atof(ch);
+			pthread_mutex_lock(somme->mut_ret);
 			*somme->retour += x;
+			pthread_mutex_unlock(somme->mut_ret);
 		}
 	pthread_exit(NULL);
 }
@@ -78,9 +91,13 @@ void* avg(void* arg)
 	avg->retour = 0;
 	while(ch[0]!='\0')
 		{//remplissage et comparaison en meme temps
+			pthread_mutex_lock(avg->mut_fic);
 			myfgets(ch,avg->fd);
+			pthread_mutex_unlock(avg->mut_fic);
 			x=atof(ch);
+			pthread_mutex_lock(avg->mut_ret);
 			*avg->retour += x;
+			pthread_mutex_unlock(avg->mut_ret);
 		}
 	pthread_exit(NULL);
 }
@@ -93,10 +110,15 @@ void* odd(void* arg)
 	odd->retour = 0;
 	while(ch[0]!='\0')
 		{//remplissage et comparaison en meme temps
+			pthread_mutex_lock(odd->mut_fic);
 			myfgets(ch,odd->fd);
+			pthread_mutex_unlock(odd->mut_fic);
 			x=atoi(ch);
-			if(x%2==1)
+			if(x%2==1){
+				pthread_mutex_lock(odd->mut_ret);
 				*odd->retour += 1;
+				pthread_mutex_unlock(odd->mut_ret);
+			}
 		}
 	pthread_exit(NULL);
 }
