@@ -1,16 +1,14 @@
 #include "chef.h"
 
-inf *init_arg(inf *arg, int fd)
+void init_arg(inf *arg, int fd)
 {
-	pthread_mutex_t mut_fic = PTHREAD_MUTEX_INITIALIZER;
-	pthread_mutex_t mut_ret = PTHREAD_MUTEX_INITIALIZER;
+	pthread_mutex_t fic = PTHREAD_MUTEX_INITIALIZER;
+	pthread_mutex_t ret = PTHREAD_MUTEX_INITIALIZER;
 	
 	arg->fd = fd;
-	arg->mut_fic = mut_fic;
-	arg->mut_ret = mut_ret;
-	arg->retour = NULL;
-	
-	return arg;
+	arg->mut_fic = &fic;
+	arg->mut_ret = &ret;
+	arg->retour = malloc(sizeof(double));
 }
 
 int recup_nbreValeurs(int fd)
@@ -18,22 +16,23 @@ int recup_nbreValeurs(int fd)
 	int nb;
 	char *ch = malloc(sizeof(char));
 	myfgets(ch, fd);
-	nb = atoi(ch);
+	nb = atoi(ch); 
+	printf("dans ce fichier il ya %d elements\n",nb);
 	return nb;
 }
 
 int recherche_operation(char *cmd)
 {
 	if(!strcmp(cmd, "min"))
-		return 0;
+		return MIN;
 	if(!strcmp(cmd, "max"))
-		return 1;
+		return MAX;
 	if(!strcmp(cmd, "sum"))
-		return 2;
+		return SUM;
 	if(!strcmp(cmd, "avg"))
-		return 3;
+		return AVG;
 	if(!strcmp(cmd, "odd"))
-		return 4;
+		return ODD;
 	return -1;
 }
 
@@ -61,9 +60,8 @@ void chef(char *cheminFic, char *cmd)
 		fprintf(stderr, "Erreur à l'ouverture du fichier %s\n", cheminFic);
 		exit(EXIT_FAILURE);
 	}
-	
-	inf *arg = NULL;
-	arg = init_arg(arg, fd);
+	inf *arg = malloc(sizeof(inf));
+	init_arg(arg, fd);
 	
 	switch(recherche_operation(cmd))
 	{
@@ -79,11 +77,20 @@ void chef(char *cheminFic, char *cmd)
 		}
 	}
 	
+	
+	//printf("le retour de ce fichier est %f  \n",*arg->retour);
+	
 	//#### possibilite main ou directeur appelle un truc creat(O_RDWR); ou mkfifo("/tmp/resultats", r+w);
 	//#### rajouter un truc du genre : communiqueResultat(arg, fic créé (ligne au dessus));
+	//#### barriere() à rajouter, pour empecher free() avant fin des threads
 	
-	if(arg->retour != NULL)
+	if(arg != NULL)
+	{
 		free(arg->retour);
+		pthread_mutex_destroy(arg->mut_fic);
+		pthread_mutex_destroy(arg->mut_ret);
+	}
+	free(arg);
 	close(fd);
 	exit(EXIT_SUCCESS);
 }

@@ -36,14 +36,13 @@ void directeur(int resultats[], int nombreDeProcessus, char* argv[])
 			printf("Je suis le processus n°%d\n",i+1);
 			
 			//La fonction chef ne retourne pas encore de resultat, je veux le stocker dans la variable resultat
-			//resultat = chef(argv[i+1],argv[0]);
+			chef(argv[i+1],argv[0]);
+			
 			
 			//Code retour qui renvoie le resultat de l'operation, de cette facon le resultat sera retourne au pere
 			exit(resultat);
 		}
 	}
-	
-	//######### Gestion des waits() bien, mais tableau resultat à retirer, on fera ca ensmeble
 	//######### En gros recup resultat sera : do{ directeur(1, {"resultats.txt"}) }while( resultat != solution globale )
 	//Synchronisation avec les nombreDeProcessus processus
 	for (i = 0; i < nombreDeProcessus; i++)
@@ -63,7 +62,7 @@ void directeur(int resultats[], int nombreDeProcessus, char* argv[])
 			printf("Retour du fils : %d\n",resultats[i]);
 		}
 		else 
-			fprintf(stderr,"Erreur : le fils n'a pas quitte\n");
+			fprintf(stderr,"Erreur : le fils a quitte avec une erreur\n");
 	}
 	printf("Pere fini\n");
 }

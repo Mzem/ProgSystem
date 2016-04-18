@@ -26,4 +26,5 @@ struct inf{
 	pthread_mutex_t *mut_fic;//pour protéger la lecture du fichier
 	pthread_mutex_t *mut_ret;//pour protéger la valeur de retour
 };
+
 typedef struct inf inf;

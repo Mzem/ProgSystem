@@ -25,7 +25,7 @@ void myfgets(char* ch,int fd){
 void* min(void* arg)
 {
 	inf* minimum = (inf*) arg;
-	char ch[100]; //pour lire du ficher une chaine
+	char* ch=malloc(sizeof(char)); //pour lire du ficher une chaine
 	double x;
 	*minimum->retour = 50;//a modifier(prend la premiere valeur pour min et max 0pour les autres)
 	while(ch[0]!='\0')
@@ -40,11 +40,12 @@ void* min(void* arg)
 				pthread_mutex_unlock(minimum->mut_ret);
 			}
 		}
+	free(ch);
 	pthread_exit(NULL);
 }
 
 void* max(void* arg)
-{
+{ 
 	inf* maximum = (inf*) arg;
 	char ch[10]; //pour lire du ficher une chaine
 	double x;

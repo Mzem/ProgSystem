@@ -2,7 +2,7 @@
 
 /*retourne la structure en arguments, avec des valeurs
  * initiales*/
-inf *init_arg(inf *arg, int fd);
+void init_arg(inf *arg, int fd);
 
 /* retourne la première ligne du fichier
  * et avance le pointeur de la même façon*/
