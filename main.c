@@ -10,10 +10,9 @@ int main(int argc, char* argv[])
 	}
 	
 	int nombreDeProcessus = argc-2;
-	double resultats[nombreDeProcessus];		//Tableau qui stocke les resultats de tous les processus
 	
-	//### modif, envoi de argv + 1 dans directeur (supprime le nom du fichier)
-	directeur(resultats, nombreDeProcessus, argv+1);	//Cree tous les processus qui inscrivent leurs resultats dans le tableau resultats[]
+	//envoi de argv + 1 dans directeur (supprime le nom du fichier)
+	directeur(nombreDeProcessus, argv+1);
 	
 	return EXIT_SUCCESS;
 }

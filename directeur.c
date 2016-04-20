@@ -12,36 +12,36 @@ pid_t creerProcessus()
 	return pid;
 }
 
-void directeur(double resultats[], int nombreDeProcessus, char* argv[])
+void directeur(int nombreDeProcessus, char* argv[])
 {
 	int i;
 	
+	pid_t *pid = NULL;
+	pid = malloc(nombreDeProcessus*sizeof(pid_t));
+
 	//Reduction en nombreDeProcessus processus et lancement des chefs
 	for (i = 0; i < nombreDeProcessus; i++)
 	{
-		pid_t pid = creerProcessus();
-		
+		pid[i] = creerProcessus();
 		//Si une erreur irrecuperable s'est produite
-		if (pid == -1)
+		if (pid[i] == -1)
 		{
 			perror("fork : ");
 			exit(EXIT_FAILURE);
 		}
-		
-		//Si on est dans un processus fils, on va effectuer une action chef puis retourner le resultat
-		else if (pid == 0)
+		//Si on est dans un processus fils, on va effectuer une action chef
+		else if (pid[i] == 0)
 		{
-			printf("Je suis le processus n°%d\n",i+1);
-			chef(argv[i+1], argv[0], resultats + i);
-			exit(getpid());
+			printf("Je suis le processus n°%d\n", getpid());
+			chef(argv[i+1], argv[0]);
 		}
 	}
-	//######### En gros recup resultat sera : do{ directeur(1, {"resultats.txt"}) }while( resultat != solution globale )
+	
+	//Attente des processus
 	for (i = 0; i < nombreDeProcessus; i++)
 	{
 		int status;
-		
-		if( wait(&status) == -1)
+		if( waitpid(pid[i], &status, 0) == -1)
 		{
 			perror("wait : ");
 			exit(EXIT_FAILURE);
@@ -49,10 +49,14 @@ void directeur(double resultats[], int nombreDeProcessus, char* argv[])
 		
 		if(WIFEXITED(status))
 		{
-			printf("Retour du fils : %f\n", resultats[i]);
+			printf("Retour du fils. n° : %d\n", pid[i]);
 		}
 		else 
 			fprintf(stderr,"Erreur : le fils a quitte avec une erreur\n");
 	}
-	printf("Pere fini\n");
+	
+	//Tous les processus ont effectué leur travail, on peut lire le fichier resultats
+	
+
+	free(pid);
 }

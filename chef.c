@@ -49,7 +49,7 @@ void creaEmployes(void *(*fct) (void *), int nb_val, void *arg)
 		pthread_join(thr[i], NULL);
 }
 
-void chef(char *cheminFic, char *cmd, double *resultat)
+void chef(char *cheminFic, char *cmd)
 {
 	int fd = open(cheminFic, O_RDONLY);
 	if(fd < 0)
@@ -58,9 +58,10 @@ void chef(char *cheminFic, char *cmd, double *resultat)
 		exit(EXIT_FAILURE);
 	}
 	
-	inf *arg = malloc(sizeof(inf));
 	pthread_mutex_t fic = PTHREAD_MUTEX_INITIALIZER;
 	pthread_mutex_t ret = PTHREAD_MUTEX_INITIALIZER;
+	
+	inf *arg = malloc(sizeof(inf));
 	init_arg(arg, fd, fic, ret);
 	
 	switch(recherche_operation(cmd))
@@ -77,14 +78,13 @@ void chef(char *cheminFic, char *cmd, double *resultat)
 		}
 	}
 	
-	*resultat = *arg->retour;
-	printf("le retour de ce fichier est %f  \n",*arg->retour);
+	//### ecriture dans un fichier ou pipe de la valeur resultat
 	
 	if(arg != NULL)
 	{
-		free(arg->retour);
 		pthread_mutex_destroy(arg->mut_fic);
 		pthread_mutex_destroy(arg->mut_ret);
+		free(arg->retour);
 	}
 	free(arg);
 	close(fd);

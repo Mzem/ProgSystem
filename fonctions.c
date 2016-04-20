@@ -58,6 +58,7 @@ void* min(void* arg)
 	*minimum->retour = atof(ch);
 	
 	// i = 1 parce qu'on a déjà lu la première valeur
+	//## condition arret for a changer, marche ici car il n'y a qu'un thread
 	for(i = 1; i < minimum->nb_val; i++)
 	{
 		pthread_mutex_lock(minimum->mut_fic);

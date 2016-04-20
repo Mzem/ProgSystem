@@ -3,6 +3,6 @@
 /* retourne un processus*/
 pid_t creerProcessus();
 
-/*Appelle nombreDeProcessus processus fils qui appellent chef et
- * renvoient un resultat qui sera stocke dans le tableau resultats[] */
-void directeur(double resultats[], int nombreDeProcessus, char* argv[]);
+/*Appelle nombreDeProcessus processus fils qui appellent chef
+ * avec la commande et les fichiers stockés dans argv */
+void directeur(int nombreDeProcessus, char* argv[]);
