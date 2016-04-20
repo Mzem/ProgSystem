@@ -1,36 +1,64 @@
 #include "fonctions.h"
 
+int isBlank_or_EOF(char c)
+{
+	return (c == ' ' || c == '\t' || c == '\n' || c == EOF);
+}
+
 char myfgetc(int fd)
 {
-	static char buf[MAXSIZE];
+	static char buf[MAXSIZE_BUF];
 	static int ncar = 0;
 	static char *p;
 	
 	if(ncar == 0)
 	{
-		ncar = read(fd, buf, MAXSIZE);
+		ncar = read(fd, buf, MAXSIZE_BUF);
 		p = buf;
 	}
 	return (ncar-- > 0) ? *p++ : EOF;
 }
 
-void myfgets(int fd, char *ch);
+int myfgets(int fd, char *ch)
+{
+	if(ch == NULL)
+		return -1;
+
+	char c;
+	char *tmp = ch;
+	//On supprime les blancs avant la chaine de caractere
+	c = myfgetc(fd);
+	while(isBlank_or_EOF(c))
+		c = myfgetc(fd);
+	
+	if(c == EOF)
+		return -1;
+	
+	int i = 0;
+	//On lit jusqu'au prochain blanc (c contient un non-blanc, non-EOF avant le do)
+	do{
+		*tmp++ = c;
+		c = myfgetc(fd);
+	}while(i++ < MAXSIZE_STR-1 && !isBlank_or_EOF(c));
+	
+	//On ajoute le caractere de fin de chaine
+	*tmp = '\0';
+	return 0;
+}
 
 void* min(void* arg)
 {
 	inf* minimum = (inf*) arg;
-	char *ch = malloc(sizeof(char));
-	int i, n;
+	char *ch = malloc(MAXSIZE_STR*sizeof(char));
+	int i;
 	double x;
 	
-	//recuperation du nombre de valeurs
-	myfgets(minimum->fd, ch);
-	n = atoi(ch);
 	//minimum initialise a la premiere valeur du fichier
 	myfgets(minimum->fd, ch);
 	*minimum->retour = atof(ch);
+	
 	// i = 1 parce qu'on a déjà lu la première valeur
-	for(i = 1; i < n; i++)
+	for(i = 1; i < minimum->nb_val; i++)
 	{
 		pthread_mutex_lock(minimum->mut_fic);
 		myfgets(minimum->fd, ch);
@@ -44,6 +72,7 @@ void* min(void* arg)
 				pthread_mutex_unlock(minimum->mut_ret);
 		}
 	}
+	
 	free(ch);
 	pthread_exit(NULL);
 }

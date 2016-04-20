@@ -12,10 +12,9 @@ pid_t creerProcessus()
 	return pid;
 }
 
-void directeur(int resultats[], int nombreDeProcessus, char* argv[])
+void directeur(double resultats[], int nombreDeProcessus, char* argv[])
 {
 	int i;
-	int resultat = 0;	//Entier stockant le resultat de l'operation de chaque processus fils
 	
 	//Reduction en nombreDeProcessus processus et lancement des chefs
 	for (i = 0; i < nombreDeProcessus; i++)
@@ -33,7 +32,7 @@ void directeur(int resultats[], int nombreDeProcessus, char* argv[])
 		else if (pid == 0)
 		{
 			printf("Je suis le processus n°%d\n",i+1);
-			chef(argv[i+1], argv[0], resultat + i);
+			chef(argv[i+1], argv[0], resultats + i);
 			exit(getpid());
 		}
 	}
@@ -50,8 +49,7 @@ void directeur(int resultats[], int nombreDeProcessus, char* argv[])
 		
 		if(WIFEXITED(status))
 		{
-			resultats[i] = WEXITSTATUS(status);
-			printf("Retour du fils : %d\n",resultats[i]);
+			printf("Retour du fils : %f\n", resultats[i]);
 		}
 		else 
 			fprintf(stderr,"Erreur : le fils a quitte avec une erreur\n");

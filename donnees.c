@@ -13,6 +13,7 @@
 #include <errno.h>
 
 #define MAXSIZE 1024
+#define MAXSIZE_STR 256
 
 #define MIN 0
 #define MAX 1
@@ -24,6 +25,7 @@
 
 struct inf{
 	int fd;					//descripteur du fichier sur lequel on travail
+	int nb_val;				//nbre de valeurs du fichier
 	double *retour;			//stocker le resultat du calcul
 	pthread_mutex_t *mut_fic;//pour protéger la lecture du fichier
 	pthread_mutex_t *mut_ret;//pour protéger la valeur de retour

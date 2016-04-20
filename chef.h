@@ -6,13 +6,13 @@ void init_arg(inf *arg, int fd, pthread_mutex_t fic, pthread_mutex_t ret);
 
 /* retourne la première ligne du fichier
  * et avance le pointeur de la même façon*/
-int recup_nbreValeur(int fd);
+int recup_nbreValeurs(int fd);
 
 /* Retourne l'entier (voir enum) corrspondant à la commande donnée*/
 int recherche_operation(char *cmd);
 
 /* Fonction qui va créer nb_thr threads exécutant la commande fct*/
-void creaEmployes(void *(*fct) (void *), int nb_thr, void *arg);
+void creaEmployes(void *(*fct) (void *), int nb_val, void *arg);
 
 /* Fonction principale du fichier chef
  * Effectue ce que doit faire un processus chef
