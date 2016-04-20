@@ -12,11 +12,10 @@ void init_arg(inf *arg, int fd, pthread_mutex_t fic, pthread_mutex_t ret)
 int recup_nbreValeurs(int fd)
 {
 	int nb;
-	char *ch = malloc(MAXSIZE_STR*sizeof(char));
+	char ch[MAXSIZE_STR];
 	myfgets(fd, ch);
 	nb = atoi(ch);
 	printf("dans ce fichier il ya %d elements\n",nb);
-	free(ch);
 	return nb;
 }
 
@@ -67,9 +66,9 @@ void chef(char *cheminFic, char *cmd)
 	switch(recherche_operation(cmd))
 	{
 		case(MIN) : creaEmployes(min, arg->nb_val, arg); break;
-		//~ case(MAX) : creaEmployes(max, arg->nb_vl, arg); break;
+		//~ case(MAX) : creaEmployes(max, arg->nb_val, arg); break;
 		//~ case(SUM) : creaEmployes(sum, arg->nb_val, arg); break;
-		//~ case(AVG) : creaEmployes(avg, arg->nb_val, arg); break;
+		//~ case(AVG) : creaEmployes(sum, arg->nb_val, arg); break;
 		//~ case(ODD) : creaEmployes(odd, arg->nb_val, arg); break;
 		default :
 		{
@@ -88,5 +87,4 @@ void chef(char *cheminFic, char *cmd)
 	}
 	free(arg);
 	close(fd);
-	exit(EXIT_SUCCESS);
 }

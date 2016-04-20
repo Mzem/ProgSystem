@@ -25,7 +25,6 @@ int myfgets(int fd, char *ch)
 		return -1;
 
 	char c;
-	char *tmp = ch;
 	//On supprime les blancs avant la chaine de caractere
 	c = myfgetc(fd);
 	while(isBlank_or_EOF(c))
@@ -37,19 +36,23 @@ int myfgets(int fd, char *ch)
 	int i = 0;
 	//On lit jusqu'au prochain blanc (c contient un non-blanc, non-EOF avant le do)
 	do{
-		*tmp++ = c;
+		*ch++ = c;
 		c = myfgetc(fd);
 	}while(i++ < MAXSIZE_STR-1 && !isBlank_or_EOF(c));
 	
 	//On ajoute le caractere de fin de chaine
-	*tmp = '\0';
+	*ch = '\0';
 	return 0;
 }
+
+char myfputc(int fd);
+
+int myfputs(int fd, char *ch);
 
 void* min(void* arg)
 {
 	inf* minimum = (inf*) arg;
-	char *ch = malloc(MAXSIZE_STR*sizeof(char));
+	char ch[MAXSIZE_STR];
 	int i;
 	double x;
 	
@@ -74,7 +77,6 @@ void* min(void* arg)
 		}
 	}
 	
-	free(ch);
 	pthread_exit(NULL);
 }
 
@@ -114,25 +116,6 @@ void* min(void* arg)
 			//~ pthread_mutex_lock(somme->mut_ret);
 			//~ *somme->retour += x;
 			//~ pthread_mutex_unlock(somme->mut_ret);
-		//~ }
-	//~ pthread_exit(NULL);
-//~ }
-//~ 
-//~ void* avg(void* arg)
-//~ { 
-	//~ inf* avg = (inf*) arg;
-	//~ char ch[10]; //pour lire du ficher une chaine
-	//~ double x;
-	//~ avg->retour = 0;
-	//~ while(ch[0]!='\0')
-		//~ {//remplissage et comparaison en meme temps
-			//~ pthread_mutex_lock(avg->mut_fic);
-			//~ myfgets(ch,avg->fd);
-			//~ pthread_mutex_unlock(avg->mut_fic);
-			//~ x=atof(ch);
-			//~ pthread_mutex_lock(avg->mut_ret);
-			//~ *avg->retour += x;
-			//~ pthread_mutex_unlock(avg->mut_ret);
 		//~ }
 	//~ pthread_exit(NULL);
 //~ }

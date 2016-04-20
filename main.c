@@ -9,10 +9,13 @@ int main(int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 	
+	double resultat;
 	int nombreDeProcessus = argc-2;
 	
 	//envoi de argv + 1 dans directeur (supprime le nom du fichier)
-	directeur(nombreDeProcessus, argv+1);
+	resultat = directeur(nombreDeProcessus, argv+1);
+	
+	printf("RESULTAT GLOBAL : %f.\n", resultat);
 	
 	return EXIT_SUCCESS;
 }

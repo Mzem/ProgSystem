@@ -10,13 +10,15 @@ char myfgetc(int fd);
  * si l'opération s'est bien passee. */
 int myfgets(int fd, char *ch);
 
+char myfputc(int fd);
+
+int myfputs(int fd, char *ch);
+
 void* min(void* arg);
 
 //~ void* max(void* arg);
 //~ 
 //~ void* sum(void* arg);
-//~ 
-//~ void* avg(void* arg);
 //~ 
 //~ void* odd(void* arg);
 
