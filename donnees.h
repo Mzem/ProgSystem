@@ -12,6 +12,8 @@
 #include <string.h>
 #include <errno.h>
 
+#define MAXSIZE 1024
+
 #define MIN 0
 #define MAX 1
 #define SUM 2
