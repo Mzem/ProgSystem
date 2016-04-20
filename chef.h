@@ -2,7 +2,7 @@
 
 /*retourne la structure en arguments, avec des valeurs
  * initiales*/
-void init_arg(inf *arg, int fd);
+void init_arg(inf *arg, int fd, pthread_mutex_t fic, pthread_mutex_t ret);
 
 /* retourne la première ligne du fichier
  * et avance le pointeur de la même façon*/
@@ -17,4 +17,4 @@ void creaEmployes(void *(*fct) (void *), int nb_thr, void *arg);
 /* Fonction principale du fichier chef
  * Effectue ce que doit faire un processus chef
  * à partir d'un fichier et d'une commande donnée*/
-void chef(char *cheminFic, char *cmd);
+void chef(char *cheminFic, char *cmd, double *resultat);

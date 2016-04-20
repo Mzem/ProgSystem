@@ -1,4 +1,5 @@
 all: reduction
+	make clean
 
 run:	reduction
 		./reduction
@@ -23,4 +24,6 @@ donnees.o: donnees.c donnees.h
 
 clean:
 	rm *.o
+	
+mrproper:
 	rm reduction

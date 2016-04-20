@@ -1,10 +1,7 @@
 #include "chef.h"
 
-void init_arg(inf *arg, int fd)
-{
-	pthread_mutex_t fic = PTHREAD_MUTEX_INITIALIZER;
-	pthread_mutex_t ret = PTHREAD_MUTEX_INITIALIZER;
-	
+void init_arg(inf *arg, int fd, pthread_mutex_t fic, pthread_mutex_t ret)
+{	
 	arg->fd = fd;
 	arg->mut_fic = &fic;
 	arg->mut_ret = &ret;
@@ -18,6 +15,7 @@ int recup_nbreValeurs(int fd)
 	myfgets(ch, fd);
 	nb = atoi(ch); 
 	printf("dans ce fichier il ya %d elements\n",nb);
+	free(ch);
 	return nb;
 }
 
@@ -45,14 +43,11 @@ void creaEmployes(void *(*fct) (void *), int nb_thr, void *arg)
 	for (i = 0; i < nb_thr; i++)
 		pthread_create(thr + i, NULL, fct, s);
 	
-	//possibilite ajout var dans join, pour eventuelles erreurs
-	//ou alors le nombre d'éléments lus par le thread pour comparer
-	//à la première ligne du fichier (gestion d'erreur)
 	for (i = 0; i < nb_thr; i++)
 		pthread_join(thr[i], NULL);
 }
 
-void chef(char *cheminFic, char *cmd)
+void chef(char *cheminFic, char *cmd, double *resultat)
 {
 	int fd = open(cheminFic, O_RDONLY);
 	if(fd < 0)
@@ -61,7 +56,9 @@ void chef(char *cheminFic, char *cmd)
 		exit(EXIT_FAILURE);
 	}
 	inf *arg = malloc(sizeof(inf));
-	init_arg(arg, fd);
+	pthread_mutex_t fic = PTHREAD_MUTEX_INITIALIZER;
+	pthread_mutex_t ret = PTHREAD_MUTEX_INITIALIZER;
+	init_arg(arg, fd, fic, ret);
 	
 	switch(recherche_operation(cmd))
 	{
@@ -77,12 +74,8 @@ void chef(char *cheminFic, char *cmd)
 		}
 	}
 	
-	
-	//printf("le retour de ce fichier est %f  \n",*arg->retour);
-	
-	//#### possibilite main ou directeur appelle un truc creat(O_RDWR); ou mkfifo("/tmp/resultats", r+w);
-	//#### rajouter un truc du genre : communiqueResultat(arg, fic créé (ligne au dessus));
-	//#### barriere() à rajouter, pour empecher free() avant fin des threads
+	*resultat = *arg->retour;
+	printf("le retour de ce fichier est %f  \n",*arg->retour);
 	
 	if(arg != NULL)
 	{

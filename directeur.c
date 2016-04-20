@@ -4,7 +4,6 @@ pid_t creerProcessus()
 {
 	pid_t pid;
 	
-	//EAGAIN : code d'erreur stocke dans errno apres un fork, signale qu'on doit refaire le fork()
 	//Donc on fork() tant que l'erreur est EAGAIN
 	do{
 		pid = fork();
@@ -14,7 +13,7 @@ pid_t creerProcessus()
 }
 
 void directeur(int resultats[], int nombreDeProcessus, char* argv[])
-{	//Appelle nombreDeProcessus processus fils qui appellent chef et renvoient un resultat qui sera stocke dans le tableau resultats[]
+{
 	int i;
 	int resultat = 0;	//Entier stockant le resultat de l'operation de chaque processus fils
 	
@@ -34,17 +33,11 @@ void directeur(int resultats[], int nombreDeProcessus, char* argv[])
 		else if (pid == 0)
 		{
 			printf("Je suis le processus n°%d\n",i+1);
-			
-			//La fonction chef ne retourne pas encore de resultat, je veux le stocker dans la variable resultat
-			chef(argv[i+1],argv[0]);
-			
-			
-			//Code retour qui renvoie le resultat de l'operation, de cette facon le resultat sera retourne au pere
-			exit(resultat);
+			chef(argv[i+1], argv[0], resultat + i);
+			exit(getpid());
 		}
 	}
 	//######### En gros recup resultat sera : do{ directeur(1, {"resultats.txt"}) }while( resultat != solution globale )
-	//Synchronisation avec les nombreDeProcessus processus
 	for (i = 0; i < nombreDeProcessus; i++)
 	{
 		int status;
@@ -55,7 +48,6 @@ void directeur(int resultats[], int nombreDeProcessus, char* argv[])
 			exit(EXIT_FAILURE);
 		}
 		
-		//Si le retour du fils s'est bien passe, on affiche le resultat de son operation
 		if(WIFEXITED(status))
 		{
 			resultats[i] = WEXITSTATUS(status);

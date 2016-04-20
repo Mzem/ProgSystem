@@ -1,27 +1,5 @@
 #include "fonctions.h"
 
-char getchar2(int fd){
-	static char buf[1024];
-	static int ncar=0;
-	static char* p;
-	if(ncar==0){
-		ncar=read(fd,buf,1024);
-		p=buf;
-	}
-	return (ncar-->0)? *p++ : EOF;
-}
-
-void myfgets(char* ch,int fd){
-	int x;
-	x=getchar2(fd);
-	while((x!='\n')&&(x!='\0')){
-		*ch++=x;
-		x=getchar2(fd);
-	}
-	*ch='\0';
-}
-
-
 void* min(void* arg)
 {
 	inf* minimum = (inf*) arg;
