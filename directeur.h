@@ -8,10 +8,11 @@ pid_t creerProcessus();
 int nbreValsTotal(char *argv[]);
 
 /* cree et initialise le fichier resultat
- * avec le nombre de processus en premiere ligne */
-void creaResultats();
+ * avec le nombre de processus (= nbre de resultats)
+ *  en premiere ligne */
+int creaResultats(int nbrDeProcessus);
 
-/* Traite le fichier résultat en lui affectant la
+/* Traite le fichier résultats en lui affectant la
  * bonne commande, retourne la solution globale*/
 double traiteResultats(char *argv[]);
 

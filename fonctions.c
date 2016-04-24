@@ -31,7 +31,7 @@ int myfgets(int fd, char *ch)
 		c = myfgetc(fd);
 	
 	if(c == EOF)
-		return -1;
+		return EOF;
 	
 	int i = 0;
 	//On lit jusqu'au prochain blanc (c contient un non-blanc, non-EOF avant le do)
@@ -45,9 +45,29 @@ int myfgets(int fd, char *ch)
 	return 0;
 }
 
-char myfputc(int fd);
+int myputc(int fd, char c)
+{
+	char buf[1];
+	buf[0] = c;
+	
+	//Ecrit un caractere
+	if(write(fd, buf, 1) > 0)
+		return 0;
+		
+	return -1;
+}
 
-int myfputs(int fd, char *ch);
+int myfputs(int fd, char *ch)
+{
+	if(ch == NULL)
+		return -1;
+	
+	char c;	
+	while((c = *ch++) != '\0')
+		myputc(fd, c);
+	
+	return 0;
+}
 
 void* min(void* arg)
 {
@@ -57,7 +77,10 @@ void* min(void* arg)
 	double x;
 	
 	//minimum initialise a la premiere valeur du fichier
+	pthread_mutex_lock(minimum->mut_fic);
 	myfgets(minimum->fd, ch);
+	pthread_mutex_unlock(minimum->mut_fic);
+	
 	*minimum->retour = atof(ch);
 	
 	// i = 1 parce qu'on a déjà lu la première valeur

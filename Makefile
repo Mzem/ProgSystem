@@ -27,3 +27,4 @@ clean:
 	
 mrproper:
 	rm reduction
+	rm resultats.txt

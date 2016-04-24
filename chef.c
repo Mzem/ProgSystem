@@ -15,7 +15,7 @@ int recup_nbreValeurs(int fd)
 	char ch[MAXSIZE_STR];
 	myfgets(fd, ch);
 	nb = atoi(ch);
-	printf("dans ce fichier il ya %d elements\n",nb);
+	printf("dans le fichieril ya %d elements\n", nb);
 	return nb;
 }
 
@@ -32,6 +32,20 @@ int recherche_operation(char *cmd)
 	if(!strcmp(cmd, "odd"))
 		return ODD;
 	return -1;
+}
+
+void ecritureResultat(double retour)
+{
+	char ch[MAXSIZE_STR];
+	int fd = open("resultats.txt", O_WRONLY | O_APPEND);
+	if(fd < 0)
+	{
+		fprintf(stderr, "Erreur à l'ouverture du fichier resultats.txt\n");
+		exit(EXIT_FAILURE);
+	}
+	
+	sprintf(ch, "%f\n", retour);
+	myfputs(fd, ch);
 }
 
 void creaEmployes(void *(*fct) (void *), int nb_val, void *arg)
@@ -77,7 +91,8 @@ void chef(char *cheminFic, char *cmd)
 		}
 	}
 	
-	//### ecriture dans un fichier ou pipe de la valeur resultat
+	//Ecriture dans le fichier resultat
+	ecritureResultat(*arg->retour);
 	
 	if(arg != NULL)
 	{

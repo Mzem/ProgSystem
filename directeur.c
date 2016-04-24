@@ -17,15 +17,15 @@ int nbreValsTotal(char *argv[])
 	return 1;
 }
 
-void creaResultats()
+int creaResultats(int nbrDeProcessus)
 {
 	char ch[MAXSIZE_STR];
-	int fd = open("resultats.txt", O_WRONLY & O_CREAT, 00666);
+	int fd = creat("resultats.txt", 00666);
 
-	sprintf(ch, "%d", recup_nbreValeurs(fd));
-	myputs(fd, ch);
+	sprintf(ch, "%d\n", nbrDeProcessus);
+	myfputs(fd, ch);
 	
-	close(fd);
+	return fd;
 }
 
 double traiteResultats(char *argv[])
@@ -35,24 +35,23 @@ double traiteResultats(char *argv[])
 	int fd = open("resultats.txt", O_RDONLY);
 	int cmd_avg = 0;
 	
-	while(recup_nbreValeurs(fd) != 1)
+	switch(recherche_operation(argv[0]))
 	{
-		switch(recherche_operation(argv[0]))
+		case(MIN) : chef("resultats.txt", "min"); break;
+		case(MAX) : chef("resultats.txt", "max"); break;
+		case(SUM) : chef("resultats.txt", "sum"); break;
+		case(AVG) : chef("resultats.txt", "sum"); cmd_avg = 1; break;
+		case(ODD) : chef("resultats.txt", "sum"); break;
+		default :
 		{
-			case(MIN) : chef("resultats.txt", "min"); break;
-			case(MAX) : chef("resultats.txt", "max"); break;
-			case(SUM) : chef("resultats.txt", "sum"); break;
-			case(AVG) : chef("resultats.txt", "sum"); cmd_avg = 1; break;
-			case(ODD) : chef("resultats.txt", "sum"); break;
-			default :
-			{
-				fprintf(stderr, "Erreur commande non trouvée %s\n", argv[0]);
-				break;
-			}
+			fprintf(stderr, "Erreur commande non trouvée %s\n", argv[0]);
+			break;
 		}
-		lseek(fd, 0, SEEK_SET); //replace au debut pour recup_nbreValeurs
 	}
-	//Il n'y a qu'une valeur à la sortie de la boucle
+	
+	//resultat écrit a la fin du fichier résultat
+	//on se place a la fin et on recule d'un "double"
+	lseek(fd, -sizeof(double), SEEK_END);
 	myfgets(fd, ch);
 	res_global = atof(ch);
 	
@@ -67,7 +66,7 @@ double directeur(int nombreDeProcessus, char* argv[])
 	pid_t *pid = NULL;
 	pid = malloc(nombreDeProcessus*sizeof(pid_t));
 	//Creation du fichier qui sert à stocker les résultats
-	creaResultats();
+	creaResultats(nombreDeProcessus);
 	
 	//Reduction en nombreDeProcessus processus et lancement des chefs
 	for (i = 0; i < nombreDeProcessus; i++)

@@ -11,6 +11,9 @@ int recup_nbreValeurs(int fd);
 /* Retourne l'entier (voir enum) corrspondant à la commande donnée*/
 int recherche_operation(char *cmd);
 
+/* Ecrit dans le fichier resultats.txt la valeur de retour des threads*/ 
+void ecritureResultat(double retour);
+
 /* Fonction qui va créer nb_thr threads exécutant la commande fct*/
 void creaEmployes(void *(*fct) (void *), int nb_val, void *arg);
 
