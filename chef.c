@@ -13,9 +13,10 @@ int recup_nbreValeurs(int fd)
 {
 	int nb;
 	char ch[MAXSIZE_STR];
+	
 	myfgets(fd, ch);
 	nb = atoi(ch);
-	printf("dans le fichieril ya %d elements\n", nb);
+
 	return nb;
 }
 
@@ -51,13 +52,24 @@ void ecritureResultat(double retour)
 void creaEmployes(void *(*fct) (void *), int nb_val, void *arg)
 {
 	int i;
-	char* ch;
+	char ch[MAXSIZE_STR];
 	inf *s = (inf *) arg;
 	int nb_thr = (nb_val / 100) + 1;
-	//myfgets(s->fd,ch);
-	//*s->retour=atof(ch);
-	pthread_t thr[nb_thr];
 	
+	//initiailisation de retour a la premiere valeur du fichier ou, 0 ou 1 si odd
+	myfgets(s->fd,ch);
+	if(fct == odd) //i agit dans ce bloc comme variable temporaire
+	{
+		i = atoi(ch);
+		if(i%2)
+			*s->retour = (double) 1;
+		else
+			*s->retour = (double) 0;
+	}	
+	else
+		*s->retour=atof(ch);
+
+	pthread_t thr[nb_thr];
 	for (i = 0; i < nb_thr; i++)
 		pthread_create(thr + i, NULL, fct, s);
 	
@@ -94,6 +106,7 @@ void chef(char *cheminFic, char *cmd)
 		}
 	}
 	
+	printf("RESULTAT DE FICHIER %f\n", *arg->retour);
 	//Ecriture dans le fichier resultat
 	ecritureResultat(*arg->retour);
 	

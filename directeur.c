@@ -50,9 +50,10 @@ double traiteResultats(char *argv[])
 	}
 	
 	//resultat écrit a la fin du fichier résultat
-	//on se place a la fin et on recule d'un "double"
-	lseek(fd, -sizeof(double), SEEK_END);
+	//on se place a la fin et on recule d'un "double avec retour a la ligne" 
+	lseek(fd, -sizeof(double) - sizeof(char), SEEK_END);
 	myfgets(fd, ch);
+	printf("RESULTAT DANS DIRECTEUR %s\n", ch);
 	res_global = atof(ch);
 	
 	close(fd);
