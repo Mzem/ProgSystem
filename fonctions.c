@@ -176,7 +176,7 @@ void* sum(void* arg)
 	inf* sum = (inf*) arg;
 	char ch[MAXSIZE_STR];
 	int i;
-	double x;
+	int x;
 	
 	//minimum initialise a la premiere valeur du fichier
 	//pthread_mutex_lock(sum->mut_fic);
@@ -193,14 +193,12 @@ void* sum(void* arg)
 		myfgets(sum->fd, ch);
 		//pthread_mutex_unlock(minimum->mut_fic);
 		
-		x = atof(ch);
-		if (x < *sum->retour)
-		{
+		x = atoi(ch);
+		if(x%2==1){
 				pthread_mutex_lock(sum->mut_ret);
-				*sum->retour = x;
+				*sum->retour += x;
 				pthread_mutex_unlock(sum->mut_ret);
-		}
+				}
 	}
-	
 	pthread_exit(NULL);
 }

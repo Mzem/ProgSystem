@@ -51,8 +51,11 @@ void ecritureResultat(double retour)
 void creaEmployes(void *(*fct) (void *), int nb_val, void *arg)
 {
 	int i;
+	char* ch;
 	inf *s = (inf *) arg;
 	int nb_thr = (nb_val / 100) + 1;
+	//myfgets(s->fd,ch);
+	//*s->retour=atof(ch);
 	pthread_t thr[nb_thr];
 	
 	for (i = 0; i < nb_thr; i++)
