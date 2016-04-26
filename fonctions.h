@@ -23,10 +23,10 @@ int myfputs(int fd, char *ch);
 
 void* min(void* arg);
 
-//~ void* max(void* arg);
-//~ 
-//~ void* sum(void* arg);
-//~ 
-//~ void* odd(void* arg);
+void* max(void* arg);
+
+void* sum(void* arg);
+
+void* odd(void* arg);
 
 

@@ -80,10 +80,10 @@ void chef(char *cheminFic, char *cmd)
 	switch(recherche_operation(cmd))
 	{
 		case(MIN) : creaEmployes(min, arg->nb_val, arg); break;
-		//~ case(MAX) : creaEmployes(max, arg->nb_val, arg); break;
-		//~ case(SUM) : creaEmployes(sum, arg->nb_val, arg); break;
-		//~ case(AVG) : creaEmployes(sum, arg->nb_val, arg); break;
-		//~ case(ODD) : creaEmployes(odd, arg->nb_val, arg); break;
+		case(MAX) : creaEmployes(max, arg->nb_val, arg); break;
+		case(SUM) : creaEmployes(sum, arg->nb_val, arg); break;
+		case(AVG) : creaEmployes(sum, arg->nb_val, arg); break;
+		case(ODD) : creaEmployes(odd, arg->nb_val, arg); break;
 		default :
 		{
 			fprintf(stderr, "Erreur commande non trouvée %s\n", cmd);
