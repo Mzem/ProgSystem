@@ -77,7 +77,7 @@ void creaEmployes(void *(*fct) (void *), int nb_val, void *arg)
 		pthread_join(thr[i], NULL);
 }
 
-void chef(char *cheminFic, char *cmd)
+double chef(char *cheminFic, char *cmd)
 {
 	int fd = open(cheminFic, O_RDONLY);
 	if(fd < 0)
@@ -106,9 +106,9 @@ void chef(char *cheminFic, char *cmd)
 		}
 	}
 	
-	printf("RESULTAT DE FICHIER %f\n", *arg->retour);
-	//Ecriture dans le fichier resultat
+	double resultat;
 	ecritureResultat(*arg->retour);
+	resultat = *arg->retour;
 	
 	if(arg != NULL)
 	{
@@ -118,4 +118,7 @@ void chef(char *cheminFic, char *cmd)
 	}
 	free(arg);
 	close(fd);
+	
+	//valeur utilisee uniquement si on traite le fichier resultats.txt
+	return resultat;
 }

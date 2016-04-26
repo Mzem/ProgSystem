@@ -1,8 +1,8 @@
 #include "fonctions.h"
 
-int isBlank_or_EOF(char c)
+int isBlank(char c)
 {
-	return (c == ' ' || c == '\t' || c == '\n' || c == EOF);
+	return (c == ' ' || c == '\t' || c == '\n');
 }
 
 char myfgetc(int fd)
@@ -23,22 +23,21 @@ int myfgets(int fd, char *ch)
 {
 	if(ch == NULL)
 		return -1;
-
 	char c;
 	//On supprime les blancs avant la chaine de caractere
 	c = myfgetc(fd);
-	while(isBlank_or_EOF(c))
+	while(isBlank(c))
 		c = myfgetc(fd);
 	
-	if(c == EOF)
+	if(c == EOF) 
 		return EOF;
-	
+		
 	int i = 0;
-	//On lit jusqu'au prochain blanc (c contient un non-blanc, non-EOF avant le do)
+	//On lit jusqu'au prochain blanc ou EOF(c contient un non-blanc avant le do)
 	do{
 		*ch++ = c;
 		c = myfgetc(fd);
-	}while(i++ < MAXSIZE_STR-1 && !isBlank_or_EOF(c));
+	}while(i++ < MAXSIZE_STR-1 && !isBlank(c) && c != EOF);
 	
 	//On ajoute le caractere de fin de chaine
 	*ch = '\0';
@@ -74,16 +73,18 @@ void* min(void* arg)
 	inf* minimum = (inf*) arg;
 	char ch[MAXSIZE_STR];
 	int i;
+	int err;
 	double x;
 
 	// i = 1 parce qu'on a déjà lu la première valeur
-	//## condition arret for a changer, marche ici car il n'y a qu'un thread
-	for(i = 1; i < minimum->nb_val; i++)
+	//100 vals maxs par thread
+	for(i = 1; i < 100; i++)
 	{
 		pthread_mutex_lock(minimum->mut_fic);
-		myfgets(minimum->fd, ch);
+		err = myfgets(minimum->fd, ch);
 		pthread_mutex_unlock(minimum->mut_fic);
-	
+		
+		if(err == EOF || err == -1) break;
 		x = atof(ch);
 
 		if (x < *minimum->retour)
@@ -101,16 +102,16 @@ void* max(void* arg)
 	inf* maximum = (inf*) arg;
 	char ch[MAXSIZE_STR];
 	int i;
+	int err;
 	double x;
 
-	// i = 1 parce qu'on a déjà lu la première valeur
-	//## condition arret for a changer, marche ici car il n'y a qu'un thread
-	for(i = 1; i < maximum->nb_val; i++)
+	for(i = 1; i < 100; i++)
 	{
-		//pthread_mutex_lock(maximum->mut_fic);
-		myfgets(maximum->fd, ch);
-		//pthread_mutex_unlock(maximum->mut_fic);
+		pthread_mutex_lock(maximum->mut_fic);
+		err = myfgets(maximum->fd, ch);
+		pthread_mutex_unlock(maximum->mut_fic);
 		
+		if(err == EOF || err == -1) break;
 		x = atof(ch);
 		if (x > *maximum->retour)
 		{
@@ -128,17 +129,18 @@ void* sum(void* arg)
 	inf* sum = (inf*) arg;
 	char ch[MAXSIZE_STR];
 	int i;
+	int err;
 	double x;
 	
 	
 	// i = 1 parce qu'on a déjà lu la première valeur
-	//## condition arret for a changer, marche ici car il n'y a qu'un thread
-	for(i = 1; i < sum->nb_val; i++)
+	for(i = 1; i < 100; i++)
 	{
 		pthread_mutex_lock(sum->mut_fic);
-		myfgets(sum->fd, ch);
+		err = myfgets(sum->fd, ch);
 		pthread_mutex_unlock(sum->mut_fic);
 		
+		if(err == EOF || err == -1) break;
 		x = atof(ch);
 		
 		pthread_mutex_lock(sum->mut_ret);
@@ -153,16 +155,17 @@ void* odd(void* arg)
 	inf* odd = (inf*) arg;
 	char ch[MAXSIZE_STR];
 	int i;
+	int err;
 	int x;
 	
 	// i = 1 parce qu'on a déjà lu la première valeur
-	//## condition arret for a changer, marche ici car il n'y a qu'un thread
-	for(i = 1; i < odd->nb_val; i++)
+	for(i = 1; i < 100; i++)
 	{
 		pthread_mutex_lock(odd->mut_fic);
-		myfgets(odd->fd, ch);
+		err = myfgets(odd->fd, ch);
 		pthread_mutex_unlock(odd->mut_fic);
 		
+		if(err == EOF || err == -1) break;
 		x = atoi(ch);
 		if(x%2==1)
 		{

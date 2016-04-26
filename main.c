@@ -14,8 +14,7 @@ int main(int argc, char* argv[])
 	
 	//envoi de argv + 1 dans directeur (supprime le nom du fichier)
 	resultat = directeur(nombreDeProcessus, argv+1);
-	
-	printf("RESULTAT GLOBAL : %f.\n", resultat);
+	printf("LE RESULTAT GLOBAL EST %f\n", resultat);
 	
 	return EXIT_SUCCESS;
 }

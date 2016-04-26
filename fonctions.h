@@ -1,6 +1,6 @@
 #include "donnees.h"
 
-int isBlank_or_EOF(char c);
+int isBlank(char c);
 
 /*Retourne le prochain caractere du fichier ou EOF */
 char myfgetc(int fd);

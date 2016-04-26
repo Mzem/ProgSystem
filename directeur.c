@@ -30,35 +30,24 @@ int creaResultats(int nbrDeProcessus)
 
 double traiteResultats(char *argv[])
 {
-	char ch[MAXSIZE_STR];
-	double res_global;
-	int fd = open("resultats.txt", O_RDONLY);
-	int cmd_avg = 0;
+	double resultat;
 	
 	switch(recherche_operation(argv[0]))
 	{
-		case(MIN) : chef("resultats.txt", "min"); break;
-		case(MAX) : chef("resultats.txt", "max"); break;
-		case(SUM) : chef("resultats.txt", "sum"); break;
-		case(AVG) : chef("resultats.txt", "sum"); cmd_avg = 1; break;
-		case(ODD) : chef("resultats.txt", "sum"); break;
+		case(MIN) : resultat = chef("resultats.txt", "min"); break;
+		case(MAX) : resultat = chef("resultats.txt", "max"); break;
+		case(SUM) : //on utilise la fonction commande sum, d'où l'omission du break
+		case(AVG) : //idem
+		case(ODD) : resultat = chef("resultats.txt", "sum"); break;
 		default :
 		{
 			fprintf(stderr, "Erreur commande non trouvée %s\n", argv[0]);
 			break;
 		}
 	}
-	
-	//resultat écrit a la fin du fichier résultat
-	//on se place a la fin et on recule d'un "double avec retour a la ligne" 
-	lseek(fd, -sizeof(double) - sizeof(char), SEEK_END);
-	myfgets(fd, ch);
-	printf("RESULTAT DANS DIRECTEUR %s\n", ch);
-	res_global = atof(ch);
-	
-	close(fd);
-	return cmd_avg ? res_global / nbreValsTotal(argv)  : res_global;
+	return resultat;
 }
+
 
 double directeur(int nombreDeProcessus, char* argv[])
 {
@@ -109,5 +98,7 @@ double directeur(int nombreDeProcessus, char* argv[])
 	//liberation de la memoire
 	free(pid);
 	
-	return traiteResultats(argv);
+	double resultat;
+	resultat = traiteResultats(argv);
+	return resultat;
 }
