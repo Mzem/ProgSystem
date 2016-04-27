@@ -19,9 +19,6 @@ chef.o: 	chef.c 	chef.h
 fonctions.o:	fonctions.c fonctions.h donnees.h
 				gcc -c -g -Wall fonctions.c
 
-#donnees.o: donnees.c donnees.h
-#				gcc -c -g -Wall donnees.c
-
 clean:
 	rm *.o
 	

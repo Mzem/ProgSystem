@@ -31,13 +31,14 @@ int creaResultats(int nombrDeProcessus)
 double traiteResultats(char *argv[])
 {
 	double resultat;
+	int cmd_avg = 0;
 	
 	switch(recherche_operation(argv[0]))
 	{
 		case(MIN) : resultat = chef("resultats.txt", "min"); break;
 		case(MAX) : resultat = chef("resultats.txt", "max"); break;
-		case(SUM) : //on utilise la fonction commande sum, d'où l'omission du break
-		case(AVG) : //idem
+		case(SUM) : resultat = chef("resultats.txt", "sum"); break;
+		case(AVG) : resultat = chef("resultats.txt", "sum"); cmd_avg = 1; break;
 		case(ODD) : resultat = chef("resultats.txt", "sum"); break;
 		default :
 		{
@@ -45,7 +46,7 @@ double traiteResultats(char *argv[])
 			break;
 		}
 	}
-	return resultat;
+	return cmd_avg ? resultat / nbreValsTotal(argv) : resultat;
 }
 
 
