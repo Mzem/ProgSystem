@@ -4,7 +4,7 @@ pid_t creerProcessus()
 {
 	pid_t pid;
 	
-	//Donc on fork() tant que l'erreur est EAGAIN
+	//On fork() tant que l'erreur est EAGAIN
 	do{
 		pid = fork();
 	} while (pid == -1 && errno == EAGAIN);
@@ -17,12 +17,12 @@ int nbreValsTotal(char *argv[])
 	return 1;
 }
 
-int creaResultats(int nbrDeProcessus)
-{
+int creaResultats(int nombrDeProcessus)
+{	//Creation d'un fichier et écriture du nombre de valeurs
 	char ch[MAXSIZE_STR];
 	int fd = creat("resultats.txt", 00666);
 
-	sprintf(ch, "%d\n", nbrDeProcessus);
+	sprintf(ch, "%d\n", nombrDeProcessus);	//écrit nombreDeProcessus dans ch
 	myfputs(fd, ch);
 	
 	return fd;
@@ -53,8 +53,10 @@ double directeur(int nombreDeProcessus, char* argv[])
 {
 	int i;
 	
+	//Creation d'un tableau de pid pour pouvoir stocker tous les pid de tous les processus fils
 	pid_t *pid = NULL;
 	pid = malloc(nombreDeProcessus*sizeof(pid_t));
+	
 	//Creation du fichier qui sert à stocker les résultats
 	creaResultats(nombreDeProcessus);
 	
@@ -71,9 +73,9 @@ double directeur(int nombreDeProcessus, char* argv[])
 		//Si on est dans un processus fils, on va effectuer une action chef
 		else if (pid[i] == 0)
 		{
-			printf("Je suis le processus n°%d\n", getpid());
-			chef(argv[i+1], argv[0]);
-			exit(EXIT_SUCCESS);
+			printf("Je suis le processus n°%d de pid = %d\n", i+1, getpid());
+			chef(argv[i+1], argv[0]);	//à modifier non ?
+			exit(i+1);	//Code retour : numéro du processus (utilisé pour repérer son pid lors du wait)
 		}
 	}
 	
@@ -89,7 +91,7 @@ double directeur(int nombreDeProcessus, char* argv[])
 		
 		if(WIFEXITED(status))
 		{
-			printf("Retour du fils. n° : %d\n", pid[i]);
+			printf("Retour du fils n°%d de pid = %d\n", WEXITSTATUS(status), pid[WEXITSTATUS(status)-1]);	//pid[i] ne renvoie pas le bon pid
 		}
 		else 
 			fprintf(stderr,"Erreur : le fils a quitte avec une erreur\n");
