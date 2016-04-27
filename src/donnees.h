@@ -23,11 +23,11 @@
 
 #endif
 
-struct inf{
+typedef struct
+{
 	int fd;					//descripteur du fichier sur lequel on travail
 	int nb_val;				//nbre de valeurs du fichier
 	double *retour;			//stocker le resultat du calcul
 	pthread_mutex_t *mut_fic;//pour protéger la lecture du fichier
 	pthread_mutex_t *mut_ret;//pour protéger la valeur de retour
-};
-typedef struct inf inf;
+} inf;

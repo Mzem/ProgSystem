@@ -1,0 +1,98 @@
+\documentclass[a4]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{listings}
+\usepackage{color}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\lstset{
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  basicstyle=\footnotesize,        % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+  frame=L,	                       % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  language=C,                 	   % the language of the code
+  otherkeywords={*,...},           % if you want to add more keywords to the set
+  numbers=none,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=2,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{mymauve},     % string literal style
+  tabsize=2,	                   % sets default tabsize to 2 spaces
+  title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption= instead of title
+}
+%gestion des caractères latins (accents...)
+\lstset{literate=
+  {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+  {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+  {à}{{\`a}}1 {è}{{\`e}}1 {ì}{{\`i}}1 {ò}{{\`o}}1 {ù}{{\`u}}1
+  {À}{{\`A}}1 {È}{{\'E}}1 {Ì}{{\`I}}1 {Ò}{{\`O}}1 {Ù}{{\`U}}1
+  {ä}{{\"a}}1 {ë}{{\"e}}1 {ï}{{\"i}}1 {ö}{{\"o}}1 {ü}{{\"u}}1
+  {Ä}{{\"A}}1 {Ë}{{\"E}}1 {Ï}{{\"I}}1 {Ö}{{\"O}}1 {Ü}{{\"U}}1
+  {â}{{\^a}}1 {ê}{{\^e}}1 {î}{{\^i}}1 {ô}{{\^o}}1 {û}{{\^u}}1
+  {Â}{{\^A}}1 {Ê}{{\^E}}1 {Î}{{\^I}}1 {Ô}{{\^O}}1 {Û}{{\^U}}1
+  {œ}{{\oe}}1 {Œ}{{\OE}}1 {æ}{{\ae}}1 {Æ}{{\AE}}1 {ß}{{\ss}}1
+  {ű}{{\H{u}}}1 {Ű}{{\H{U}}}1 {ő}{{\H{o}}}1 {Ő}{{\H{O}}}1
+  {ç}{{\c c}}1 {Ç}{{\c C}}1 {ø}{{\o}}1 {å}{{\r a}}1 {Å}{{\r A}}1
+  {€}{{\EUR}}1 {£}{{\pounds}}1
+}
+
+\author{Sonny Klotz - Younes Ben Yamna - Malek Zemni}
+\title{Rapport - Projet systèmes d'exploitation}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+	\section{Introduction}
+			Le but de ce programme est d'effectuer une opération donnée \textit{(minimum, maximum, moyenne, somme ou impairs)} sur
+			un ensemble de valeurs répartis dans plusieurs fichiers.\\
+			Dans un premier lieu, cette opération sera effectuée localement sur chaque fichier. Dans un second lieu, cette opération sera effectuée
+			sur les résultats des opérations locales aux fichiers pour obtenir un résultat final.\\
+			Cette manipulation va donc nécessiter une réduction à deux niveaux : le travail sera d'abord divisé entre N processus, puis entre M 
+			threads pas processus.\\
+			La réalisation de cette opération de réduction va donc nécessiter l'implémentation de deux fonctions principales :
+			\begin{itemize}
+				\item{La fonction \textbf{directeur} : effectue la première réduction}
+				\item{La fonction \textbf{chef} : effectue la seconde réduction}
+			\end{itemize}
+			La fonction \textbf{directeur} va divise le travail entre N processus fils. Chaque processus fils quant à lui va faire appel à la fonction 
+			\textbf{chef} qui divise le travail entre M threads.
+			
+	\section{Directeur}
+			La fonction \textbf{directeur} et toutes ses fonctionnalités sont codées dans le fichier \textbf{directeur.c}.\\
+			Le role principal de cette fonction est de créer autant de processus que de fichiers fournis en utilisant l'appel sysème 
+			\textbf{fork()}.\\
+			Dans la fonction \textbf{directeur}, une première boucle permet d'abord de créer tous les processus et de lancer la fonction 
+			\textbf{chef} pour chaque processus. Ensuite, une deuxième boucle permet au processus père d'attendre la fin de tous ses processus fils.\\
+			La gestion d'erreurs de la fonction \textbf{fork()} est assurée par la variable globale \textit{errno} fournie par errno.h.\\
+			
+			La récupération du résultat...?\\
+			
+	\section{Chef}
+			\paragraph{Structure inf :\\}
+			Strucutre utilisée pour...
+			\lstinputlisting[firstline=26,lastline=33,title=donnees.h]{../src/donnees.h}
+			
+	\section{Fonctions}
+
+	\section{Conclusion}
+		
+
+\end{document}
+
+
