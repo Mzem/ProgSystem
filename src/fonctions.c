@@ -7,16 +7,13 @@ int isBlank(char c)
 
 char myfgetc(int fd)
 {
-	static char buf[MAXSIZE_BUF];
-	static int ncar = 0;
-	static char *p;
+	char buf[1];
 	
-	if(ncar == 0)
-	{
-		ncar = read(fd, buf, MAXSIZE_BUF);
-		p = buf;
-	}
-	return (ncar-- > 0) ? *p++ : EOF;
+	//Ecrit un caractere
+	if(read(fd, buf, 1) > 0)
+		return buf[0];
+		
+	return -1;
 }
 
 int myfgets(int fd, char *ch)
@@ -80,7 +77,7 @@ void* min(void* arg)
 	//100 vals maxs par thread
 	for(i = 1; i < 100; i++)
 	{
-		pthread_mutex_lock(minimum->mut_fic);
+		pthread_mutex_lock(minimum->mut_fic); perror("MUTEX");
 		err = myfgets(minimum->fd, ch);
 		pthread_mutex_unlock(minimum->mut_fic);
 		
@@ -136,7 +133,7 @@ void* sum(void* arg)
 	// i = 1 parce qu'on a déjà lu la première valeur
 	for(i = 1; i < 100; i++)
 	{
-		pthread_mutex_lock(sum->mut_fic);
+		pthread_mutex_trylock(sum->mut_fic);
 		err = myfgets(sum->fd, ch);
 		pthread_mutex_unlock(sum->mut_fic);
 		

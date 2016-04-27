@@ -12,9 +12,30 @@ pid_t creerProcessus()
 	return pid;
 }
 
-int nbreValsTotal(char *argv[])
+int nbreValsTotal(char *argv[], int nombreDeProcessus)
 {
-	return 1;
+	//argv[1] premier fichier
+	int i, nbVals = 0;
+	char ch[MAXSIZE_STR];
+	for (i = 1; i <= nombreDeProcessus; i++)
+	{
+		int fd = open(argv[i], O_RDONLY);
+		
+		if (fd == -1)
+			perror("open");
+		
+		lseek(fd, 0, SEEK_SET);	//par sécurité
+		
+		if (myfgets(fd, ch) == -1)
+		{
+			fprintf(stderr,"Erreur calcul nombre total de valeurs\n");
+			exit(EXIT_FAILURE);
+		}
+		
+		nbVals += atoi(ch);
+		close(fd);
+	}
+	return nbVals;
 }
 
 int creaResultats(int nombrDeProcessus)
@@ -28,7 +49,7 @@ int creaResultats(int nombrDeProcessus)
 	return fd;
 }
 
-double traiteResultats(char *argv[])
+double traiteResultats(char *argv[], int nombreDeProcessus)
 {
 	double resultat;
 	int cmd_avg = 0;
@@ -46,7 +67,7 @@ double traiteResultats(char *argv[])
 			break;
 		}
 	}
-	return cmd_avg ? resultat / nbreValsTotal(argv) : resultat;
+	return cmd_avg && nbreValsTotal(argv, nombreDeProcessus) ? resultat/nbreValsTotal(argv, nombreDeProcessus) : resultat;	//gère le cas ou il y'a 0 valeurs
 }
 
 
@@ -75,7 +96,7 @@ double directeur(int nombreDeProcessus, char* argv[])
 		else if (pid[i] == 0)
 		{
 			printf("Je suis le processus n°%d de pid = %d\n", i+1, getpid());
-			chef(argv[i+1], argv[0]);	//à modifier non ?
+			chef(argv[i+1], argv[0]);
 			exit(i+1);	//Code retour : numéro du processus (utilisé pour repérer son pid lors du wait)
 		}
 	}
@@ -102,6 +123,6 @@ double directeur(int nombreDeProcessus, char* argv[])
 	free(pid);
 	
 	double resultat;
-	resultat = traiteResultats(argv);
+	resultat = traiteResultats(argv, nombreDeProcessus);
 	return resultat;
 }
