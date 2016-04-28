@@ -1,27 +1,36 @@
-all: reduction
-	make clean
+CC = gcc
+CFLAGS = -Wall -g
+LDFLAGS = -lpthread
+EXEC = reduction
 
-run:	reduction
-		./reduction
+#utiliser : min, max, sum, avg, odd.
+CMD = sum
+FILES = fic1.txt ../data/fic2.txt
 
-reduction: fonctions.o chef.o directeur.o main.o
-			gcc -g -Wall main.o chef.o fonctions.o directeur.o -o reduction -lpthread
+SRC = $(wildcard *.c)
+OBJ = $(SRC:.c=.o)
 
-main.o:	main.c 	directeur.h  
-		gcc -c -g -Wall main.c
+all: $(EXEC)
+	
+run: $(EXEC)
+		./$(EXEC) $(CMD) $(FILES)
 
-directeur.o:	directeur.c directeur.h
-				gcc -c -g -Wall directeur.c
+reduction: $(OBJ)
+			$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
-chef.o: 	chef.c 	chef.h
-				gcc -c -g -Wall chef.c
+main.o:	directeur.h  
+directeur.o: directeur.h
+chef.o: chef.h
+fonctions.o: fonctions.h donnees.h
 
-fonctions.o:	fonctions.c fonctions.h donnees.h
-				gcc -c -g -Wall fonctions.c
+%.o: %.c
+		$(CC) -c $(CFLAGS) -o $@ $<
+
+.PHONY: clean mrproper
 
 clean:
-	rm *.o
+	@rm *.o
 	
-mrproper:
-	rm reduction
-	rm resultats.txt
+mrproper: clean
+	@rm $(EXEC)
+	@rm resultats.txt

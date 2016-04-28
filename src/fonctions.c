@@ -77,9 +77,9 @@ void* min(void* arg)
 	//100 vals maxs par thread
 	for(i = 1; i < 100; i++)
 	{
-		pthread_mutex_lock(minimum->mut_fic); perror("MUTEX");
+		//pthread_mutex_lock(minimum->mut_fic); perror("MUTEX");
 		err = myfgets(minimum->fd, ch);
-		pthread_mutex_unlock(minimum->mut_fic);
+		//pthread_mutex_unlock(minimum->mut_fic);
 		
 		if(err == EOF || err == -1) break;
 		x = atof(ch);
@@ -104,9 +104,9 @@ void* max(void* arg)
 
 	for(i = 1; i < 100; i++)
 	{
-		pthread_mutex_lock(maximum->mut_fic);
+		//pthread_mutex_lock(maximum->mut_fic);
 		err = myfgets(maximum->fd, ch);
-		pthread_mutex_unlock(maximum->mut_fic);
+		//pthread_mutex_unlock(maximum->mut_fic);
 		
 		if(err == EOF || err == -1) break;
 		x = atof(ch);
@@ -133,9 +133,9 @@ void* sum(void* arg)
 	// i = 1 parce qu'on a déjà lu la première valeur
 	for(i = 1; i < 100; i++)
 	{
-		pthread_mutex_trylock(sum->mut_fic);
+		//pthread_mutex_trylock(sum->mut_fic);
 		err = myfgets(sum->fd, ch);
-		pthread_mutex_unlock(sum->mut_fic);
+		//pthread_mutex_unlock(sum->mut_fic);
 		
 		if(err == EOF || err == -1) break;
 		x = atof(ch);
@@ -158,9 +158,9 @@ void* odd(void* arg)
 	// i = 1 parce qu'on a déjà lu la première valeur
 	for(i = 1; i < 100; i++)
 	{
-		pthread_mutex_lock(odd->mut_fic);
+		//pthread_mutex_lock(odd->mut_fic);
 		err = myfgets(odd->fd, ch);
-		pthread_mutex_unlock(odd->mut_fic);
+		//pthread_mutex_unlock(odd->mut_fic);
 		
 		if(err == EOF || err == -1) break;
 		x = atoi(ch);
