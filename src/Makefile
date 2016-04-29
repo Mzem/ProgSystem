@@ -5,7 +5,7 @@ EXEC = reduction
 
 #utiliser : min, max, sum, avg, odd.
 CMD = sum
-FILES = fic1.txt ../data/fic2.txt
+FILES = ../data/sample1.txt ../data/sample2.txt
 
 SRC = $(wildcard *.c)
 OBJ = $(SRC:.c=.o)

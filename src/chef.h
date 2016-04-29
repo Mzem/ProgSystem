@@ -2,13 +2,13 @@
 
 /*retourne la structure en arguments, avec des valeurs
  * initiales*/
-void init_arg(inf *arg, int fd, /*pthread_mutex_t fic,*/ pthread_mutex_t ret);
+void init_arg(inf *arg, int fd, pthread_mutex_t fic, pthread_mutex_t ret);
 
 /* retourne la première ligne du fichier
  * et avance le pointeur de la même façon*/
 int recup_nbreValeurs(int fd);
 
-/* Retourne l'entier (voir enum) corrspondant à la commande donnée*/
+/* Retourne l'entier (voir donnees.h) correspondant à la commande donnée*/
 int recherche_operation(char *cmd);
 
 /* Ecrit dans le fichier resultats.txt la valeur de retour des threads*/ 

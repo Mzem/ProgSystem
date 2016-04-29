@@ -63,34 +63,79 @@
 			un ensemble de valeurs répartis dans plusieurs fichiers.\\
 			Dans un premier lieu, cette opération sera effectuée localement sur chaque fichier. Dans un second lieu, cette opération sera effectuée
 			sur les résultats des opérations locales aux fichiers pour obtenir un résultat final.\\
-			Cette manipulation va donc nécessiter une réduction à deux niveaux : le travail sera d'abord divisé entre N processus, puis entre M 
+			Cette manipulation est donc une réduction à deux niveaux : le travail sera d'abord divisé entre N processus, puis entre M 
 			threads pas processus.\\
-			La réalisation de cette opération de réduction va donc nécessiter l'implémentation de deux fonctions principales :
+			La réalisation de cette opération de réduction va nécessiter l'implémentation de deux fonctions principales :
 			\begin{itemize}
 				\item{La fonction \textbf{directeur} : effectue la première réduction}
 				\item{La fonction \textbf{chef} : effectue la seconde réduction}
 			\end{itemize}
 			La fonction \textbf{directeur} va divise le travail entre N processus fils. Chaque processus fils quant à lui va faire appel à la fonction 
-			\textbf{chef} qui divise le travail entre M threads.
+			\textbf{chef} qui divise le travail entre M threads.\\
+			Ces deux opérations de rédution vont etre détaillées dans les parties suivantes.
 			
 	\section{Directeur}
-			La fonction \textbf{directeur} et toutes ses fonctionnalités sont codées dans le fichier \textbf{directeur.c}.\\
-			Le role principal de cette fonction est de créer autant de processus que de fichiers fournis en utilisant l'appel sysème 
-			\textbf{fork()}.\\
-			Dans la fonction \textbf{directeur}, une première boucle permet d'abord de créer tous les processus et de lancer la fonction 
-			\textbf{chef} pour chaque processus. Ensuite, une deuxième boucle permet au processus père d'attendre la fin de tous ses processus fils.\\
-			La gestion d'erreurs de la fonction \textbf{fork()} est assurée par la variable globale \textit{errno} fournie par errno.h.\\
+			La fonction principale \textbf{directeur} et toutes ses fonctionnalités sont codées dans le fichier \textbf{directeur.c}.\\
 			
-			La récupération du résultat...?\\
+			D'abord, la fonction \textbf{directeur} crée un fichier \textit{resultats.txt} et y insère le nombre total de fichiers fournis. Ce 
+			fichier permet de stocker, ligne par ligne, les résultats locaux des chefs d'équipes (processus). Ce fichier sera traité à la fin pour 
+			obtenir un résultat final.\\
+			Ensuite, cette fonction crée les processus chef d'équipe. Une première boucle permet de créer autant de processus fils que de fichiers 
+			fournis en utilisant l'appel système \textbf{fork()}. Ces processus fils lançeront à leur tour la fonction \textbf{chef} pour répartir 
+			le travail entre les employés (threads).\\
+			Enfin, une dernière boucle permet au processus père de se synchroniser et d'attendre la fin de tous ses processus fils en utilisant 
+			l'appel système \textbf{wait()}.
+			
+			\paragraph{Remarque : utilisation du fichier resultats.txt au détriment des tubes\\}
+			Nous aurions pu utiliser des pipes pour communiquer les résultats entres les différents processus fils, mais cela aura nécéssité la 
+			reprogrammation de fonctions \textit{minimum, maximum, moyenne, somme ou impairs} simples afin de générer un résultat final. Nous avons 
+			préféré stocker le résultat de chaque processus en un seul et unique fichier afin de pouvoir réutiliser la fonction \textbf{chef} et 
+			ainsi réappliquer l'opération une dernière fois sur ce fichier et obtenir directement un résultat global.
 			
 	\section{Chef}
-			\paragraph{Structure inf :\\}
-			Strucutre utilisée pour...
+			Le deuxième niveau de réduction, c'est-à-dire le partage du travail entre plusieurs employés (threads), va être réalisé à l'aide des 
+			fonctions du fichier \textbf{chef.c}.\\
+
+			On peut représenter schématiquement son flux d'exécution en 3 étapes :
+			\begin{enumerate}
+				\item{L'initialisation de la structure (argument nécessaire pour appeler l'opération demandée par l'utilisateur)}
+				\item{La création des threads, ainsi que leur attente : (fonction \textit{creaEmployes)}}
+				\item{Ecriture du résultat local de l'opération dans le fichier \textit{resultats.txt}}
+			\end{enumerate}
+			
+			La difficulté qu'il va falloir prendre en compte est la gestion de la concurrence.
+			En effet, nous avons deux variables critiques, car nos threads vont vouloir modifier et lire des variables partagées :
+			\begin{itemize}
+				\item{La valeur de retour de la structure, qui est modifiée au fur et à mesure qu'un thread effectue sa tâche}
+				\item{Le fichier, dont le pointeur de position va être modifié après les multiples lectures}
+			\end{itemize}
+
+			Nous initialisons donc deux mutex dans notre structure pour protéger ces deux variables. Voici la structure utilisée pour stocker 
+			les informations concernant un thread :
 			\lstinputlisting[firstline=26,lastline=33,title=donnees.h]{../src/donnees.h}
 			
 	\section{Fonctions}
+			Le fichier \textbf{fonctions.c} contient d'une part les opérations que va effectuer un thread employé 
+			\textit{(minimum, maximum, moyenne, somme ou impairs)}, et d'autre part, des fonctions, utilisées pour la gestion des fichiers, qui n'ont 
+			recourt qu'à des appels systèmes.\\
+			Les fonctions représentant les opérations ont toutes le meme schéma : on commence par caster l’argument, puis lire les éléments du 
+			fichier (100 au maximum par thread) tout en veillant à le protéger par le mutex \textit{mut\_fic}*, et finalement, on modifie le 
+			résultat du thread qui est lui aussi protégé par le mutex \textit{mut\_ret}.
+	
 
-	\section{Conclusion}
+	\section{Remarques et Conclusion}
+		\paragraph{Gestion d'erreurs :\\}
+			Pour la plus part des appels systèmes, la gestion d'erreurs a été assurée par la variable globale \textit{errno}, fournie par 
+			\textit{errno.h}, dont le contenu a été affiché à l'aide de la fonction \textit{perror}.\\
+			Pour les autres fonctions, les messages d'erreurs ont été affichés sur la sortie d'erreur standard \textit{stderr}.
+		\paragraph{Une erreur étrange à cause d'un mutex* :\\}
+			Nous avons décidé dans tout le projet de mettre en commentaire toutes les occurences du mutex lié au fichier.
+			Cela est dû à un problème dont nous ignorons la cause. Les deux mutex sont utilisés strictement de la même façon, pourtant,
+			le mutex lié au résultat va toujours fonctionner, alors que le mutex lié au fichier ne fonctionnera que sur certains ordinateurs.
+			Mais le retrait du mutex au fichier ne pose aucun problème, peu importe la machine utilisée.
+			L'erreur produite fait qu'à l'arrivée au mutex du fichier, le programme semble s'arrêter sans quitter. La documentation
+			des mutex nous laisse penser que ce problème est un \textit{deadlock}, mais la résolution de ce type de problème nous est inconnue.
+			Le projet fonctionnant correctement ainsi, nous avons décidé de ne pas approfondir le cas.
 		
 
 \end{document}

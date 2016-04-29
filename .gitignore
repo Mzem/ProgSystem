@@ -1,5 +1,6 @@
 *.o
 *.log
 *.aux
+*.dvi
 reduction
-*.txt
+resultats.txt

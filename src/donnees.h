@@ -25,9 +25,9 @@
 
 typedef struct
 {
-	int fd;					//descripteur du fichier sur lequel on travail
-	int nb_val;				//nbre de valeurs du fichier
-	double *retour;			//stocker le resultat du calcul
-	//pthread_mutex_t *mut_fic;//pour protéger la lecture du fichier
-	pthread_mutex_t *mut_ret;//pour protéger la valeur de retour
+	int fd;						//descripteur du fichier sur lequel on travaille
+	int nb_val;					//nombre de valeurs du fichier
+	double *retour;				//stocker le resultat du calcul
+	pthread_mutex_t *mut_fic;	//pour protéger la lecture du fichier
+	pthread_mutex_t *mut_ret;	//pour protéger la valeur de retour
 } inf;

@@ -4,7 +4,7 @@
 pid_t creerProcessus();
 
 /* retourne la somme de tous les headers des fichiers
- * en arguments, cad le nombre total de valeurs a traiter */
+ * en arguments, càd le nombre total de valeurs à traiter */
 int nbreValsTotal(char *argv[], int nombreDeProcessus);
 
 /* cree et initialise le fichier resultat

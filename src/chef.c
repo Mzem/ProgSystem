@@ -1,10 +1,10 @@
 #include "chef.h"
 
-void init_arg(inf *arg, int fd, /*pthread_mutex_t fic,*/ pthread_mutex_t ret)
+void init_arg(inf *arg, int fd, pthread_mutex_t fic, pthread_mutex_t ret)
 {	
 	arg->fd = fd;
 	arg->nb_val = recup_nbreValeurs(fd);
-	//arg->mut_fic = &fic;
+	arg->mut_fic = &fic;
 	arg->mut_ret = &ret;
 	arg->retour = malloc(sizeof(double));
 }
@@ -86,11 +86,11 @@ double chef(char *cheminFic, char *cmd)
 		exit(EXIT_FAILURE);
 	}
 	
-	//pthread_mutex_t fic = PTHREAD_MUTEX_INITIALIZER;
+	pthread_mutex_t fic = PTHREAD_MUTEX_INITIALIZER;
 	pthread_mutex_t ret = PTHREAD_MUTEX_INITIALIZER;
 	
 	inf *arg = malloc(sizeof(inf));
-	init_arg(arg, fd, /*fic,*/ ret);
+	init_arg(arg, fd, fic, ret);
 	
 	switch(recherche_operation(cmd))
 	{
@@ -101,7 +101,8 @@ double chef(char *cheminFic, char *cmd)
 		case(ODD) : creaEmployes(odd, arg->nb_val, arg); break;
 		default :
 		{
-			fprintf(stderr, "Erreur commande non trouvée %s\n", cmd);
+			fprintf(stderr, "Erreur : commande non trouvée %s\n", cmd);
+			abort();	//Pas de exit car on signale l'erreur au processus (terminaison anormale)
 			break;
 		}
 	}
@@ -112,13 +113,13 @@ double chef(char *cheminFic, char *cmd)
 	
 	if(arg != NULL)
 	{
-		//pthread_mutex_destroy(arg->mut_fic);
+		pthread_mutex_destroy(arg->mut_fic);
 		pthread_mutex_destroy(arg->mut_ret);
 		free(arg->retour);
 	}
 	free(arg);
 	close(fd);
 	
-	//valeur utilisee uniquement si on traite le fichier resultats.txt
+	//valeur utilisée uniquement si on traite le fichier resultats.txt
 	return resultat;
 }
