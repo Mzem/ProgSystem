@@ -2,7 +2,7 @@
 
 /*retourne la structure en arguments, avec des valeurs
  * initiales*/
-void init_arg(inf *arg, int fd, pthread_mutex_t fic, pthread_mutex_t ret);
+void init_arg(inf *arg, int fd, pthread_mutex_t *fic, pthread_mutex_t *ret);
 
 /* retourne la première ligne du fichier
  * et avance le pointeur de la même façon*/

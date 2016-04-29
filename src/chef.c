@@ -1,11 +1,11 @@
 #include "chef.h"
 
-void init_arg(inf *arg, int fd, pthread_mutex_t fic, pthread_mutex_t ret)
+void init_arg(inf *arg, int fd, pthread_mutex_t *fic, pthread_mutex_t *ret)
 {	
 	arg->fd = fd;
 	arg->nb_val = recup_nbreValeurs(fd);
-	arg->mut_fic = &fic;
-	arg->mut_ret = &ret;
+	arg->mut_fic = fic;
+	arg->mut_ret = ret;
 	arg->retour = malloc(sizeof(double));
 }
 
@@ -90,7 +90,7 @@ double chef(char *cheminFic, char *cmd)
 	pthread_mutex_t ret = PTHREAD_MUTEX_INITIALIZER;
 	
 	inf *arg = malloc(sizeof(inf));
-	init_arg(arg, fd, fic, ret);
+	init_arg(arg, fd, &fic, &ret);
 	
 	switch(recherche_operation(cmd))
 	{
