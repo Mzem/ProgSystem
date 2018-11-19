@@ -1,0 +1,33 @@
+\documentclass[10pt]{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage[ddmmyyyy]{datetime}
+\usepackage{listings,lstautogobble,graphicx,tikz,verbatim, amsthm,amsfonts,amsmath,amssymb,mathrsfs,thmtools}
+\usetikzlibrary{arrows,automata}
+\usetikzlibrary{positioning}
+
+\usetheme{Warsaw}
+\useinnertheme{rectangles}
+\setbeamerfont{headline}{size=\large}
+\setbeamerfont{frametitle}{size=\normalsize}
+
+
+%Plan/Sommaire automatique avant chaque section
+\AtBeginSection[]{
+  \begin{frame}
+  \frametitle{Plan}
+  \tableofcontents[currentsection]
+  \end{frame}
+}
+\AtBeginSubsection[]
+{
+    \begin{frame}{Plan}
+        \tableofcontents[currentsection,currentsubsection]
+    \end{frame}
+}
+
+\author{Steve Alabi - Taha Bendjeddou - Younes Benyamna - Malek Zemni}
+\institute{UVSQ}
+\date{\today}
