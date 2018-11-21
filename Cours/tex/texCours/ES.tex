@@ -2,13 +2,13 @@
 	Les entrées / sorties traitent des données qu'on peut lire ou écrire à partir de fichiers. Il existe 2 niveaux de gestion des entrées / sorties et fichiers :
 	\begin{itemize}
 		\item Entrées / sorties effectuées immédiatement (avec des appels-systèmes)
-		\item Entrées / sorties où les données sont mises en mémoire temporaire \textbf{\textit{buffer}} (avec des fonctions standard)
+		\item Entrées / sorties où les données sont mises en mémoire temporaire (\textit{\textbf{buffer} ou mémoire tampon, zone de mémoire virtuelle utilisée pour stocker temporairement les données, notamment entre 2 processus}) (avec des fonctions standard)
 	\end{itemize}
 	
 	\subsection{Entrées / Sorties standard}
 		Toutes les fonctions décrites ici sont déclarées dans la bibliothèque \lstinline!stdio.h!.
 		
-		\noindent\paragraph{}\textbf{Ouvrir et fermer un fichier :}
+		~\\\textbf{Ouvrir et fermer un fichier :}
 			
 			\begin{lstlisting}
 				FILE* fopen(const char* nomDuFichier, const char* modeOuverture);
@@ -18,7 +18,7 @@
 				// renvoie 0 si la fermeture réussit, EOF sinon
 			\end{lstlisting}
 		
-		\noindent\paragraph{}\textbf{Écrire dans un fichier :}
+		~\\\textbf{Écrire dans un fichier :}
 		
 			\begin{lstlisting}
 				int fputc(int caractere, FILE* pointeurSurFichier);
@@ -33,7 +33,7 @@
 				// retournent EOF si écriture échoue
 			\end{lstlisting}
 			
-		\noindent\paragraph{}\textbf{Lire à partir d'un fichier :}
+		~\\\textbf{Lire dans un fichier :}
 		
 			\begin{lstlisting}
 				int fgetc(FILE* pointeurDeFichier);
@@ -49,7 +49,7 @@
 				// écrit une chaîne formatée
 			\end{lstlisting}
 			
-		\noindent\paragraph{}\textbf{Se déplacer dans un fichier :} la tête de lecture est une sorte de curseur virtuel dans un fichier qui indique la position de lecture / écriture actuelle.
+		~\\\textbf{Se déplacer dans un fichier :} la tête de lecture est une sorte de curseur virtuel dans un fichier qui indique la position de lecture / écriture actuelle.
 		
 			\begin{lstlisting}
 				long ftell(FILE* pointeurSurFichier);
@@ -66,7 +66,139 @@
 			
 		
 	\subsection{Entrées / Sorties système}
-		Les fonctions d'entrée / sortie système sont des appels-systèmes communiquant directement avec le noyeau. Les fonctions d'entrée / sortie standard font eux-même appel à ces fonctions système.
+		Les fonctions d'entrée / sortie système sont des appels-systèmes communiquant directement avec le noyau. Les fonctions d'entrée / sortie standard font eux-même appel à ces fonctions système. Ces fonctions système se trouvent dans les bibliothèques suivantes :
+		\begin{lstlisting}
+			#include <sys/types.h>
+			#include <sys/stat.h>
+			#include <fcntl.h>
+			#include <unistd.h>
+		\end{lstlisting}
+		
+		
+		~\\\textbf{Ouvrir et fermer un fichier :}
+			
+			\begin{lstlisting}
+				int open(const char* pathname, int flags, mode_t mode);
+			\end{lstlisting}
+			\begin{itemize}
+				\item \textbf{retour :} un "file descriptor" \lstinline!fd! >= 0, prend la plus petite valeur disponible (non ouvert) ou \textbf{-1} si l'ouverture échoue, auquel cas errno contient le code d'erreur
+				\item \textbf{\lstinline!pathname! :} chemin du fichier à ouvrir
+				\item \textbf{\lstinline!flags! :} mode d'accès, contient une ou plusieurs valeurs dont obligatoirement une parmi O\_RDONLY, O\_WRONLY ou O\_RDWR
+				\item \textbf{\lstinline!mode! :} indique les permissions à utiliser si un nouveau fichier est créé, doit être fourni lorsque O\_CREAT est spécifié dans \lstinline!flags! sinon ignoré
+			\end{itemize}
+			
+			\begin{lstlisting}
+				int close(int fd);
+			\end{lstlisting}
+			\begin{itemize}
+				\item \textbf{retour :} 0 ou -1 en cas d'échec
+				\item \textbf{\lstinline!fd! :} descripteur du fichier à fermer
+			\end{itemize}
+			
+		~\\\textbf{Lire et écrire dans un fichier :}\hspace*{-2em}
+			\begin{lstlisting}
+				ssize_t read(int fd, void* buf, size_t count);
+			\end{lstlisting}
+			\begin{itemize}
+				\item \textbf{retour :} -1 en cas d'échec, et la position de la tête de lecture est indéfinie, sinon, renvoie le nombre d'octets lus (0 en fin de fichier), et avance la tête de lecture de ce nombre
+				\item \textbf{\lstinline!fd! :} descripteur du fichier à lire
+				\item \textbf{\lstinline!buf! :} pointe sur un tampon (buffer) où sont stockées les données lues 
+				\item \textbf{\lstinline!count! :} nombre d'octets à lire, résultat indéfini si \lstinline!count! est supérieur à \lstinline!SSIZE_MAX!
+			\end{itemize}
+			
+			\begin{lstlisting}
+				ssize_t write(int fd, const void* buf, size_t count);
+			\end{lstlisting}
+			\begin{itemize}
+				\item \textbf{retour :} -1 en cas d'échec, sinon, renvoie le nombre d'octets écrits et avance la tête de lecture de ce nombre
+				\item \textbf{\lstinline!fd! :} descripteur du fichier dans lequel on va écrire
+				\item \textbf{\lstinline!buf! :} pointe sur un tampon (buffer) où sont stockées les données à écrire 
+				\item \textbf{\lstinline!count! :} nombre d'octets à écrire
+			\end{itemize}
+			
+		~\\\textbf{Se déplacer dans un fichier :}\hspace*{-2em}
+			\begin{lstlisting}
+				off_t lseek(int fd, off_t offset, int whence);
+			\end{lstlisting}
+			\begin{itemize}
+				\item \textbf{retour :} -1 en cas d'échec, sinon, renvoie le nouvel emplacement, mesuré en octets depuis le début du fichier
+				\item \textbf{\lstinline!offset! :} nombre d'octets de déplacement 
+				\item \textbf{\lstinline!whence! :} SEEK\_SET : la tête est placée à \lstinline!offset! octets depuis le début du fichier, SEEK\_CUR : la tête est avancée de \lstinline!offset! octets, SEEK\_END : la tête est placée à la fin du fichier plus \lstinline!offset! octets
+			\end{itemize}
+			
+		\subsubsection*{Exemples :}
+			On peut réécrire une version personnalisée des fonctions standard d'entrée / sortie en utilisant des appels-systèmes.
+			
+			\begin{lstlisting}
+				int copie (char* fic1, char* fic2) 
+				{
+					int fd1 = open(fic1, O_RDONLY);
+					int fd2 = open(fic2, O_WRONLY);
+					
+					int nb;
+					char buf[1024];
+					
+					// tq nb != 0 et != -1
+					while ( (nb = read(fd1, buf, 1024)) > 0 )
+						if ( write(fd2, buf, nb) != nb )
+							return -1;
+							
+					return 1;
+				}
+			\end{lstlisting}
+		
+			\begin{lstlisting}
+				int myGetChar (int fd) 
+				{
+					int retour;
+					unsigned char c;
+					
+					if ( read(fd, &c, 1) == 1 )
+						retour = c;
+					else
+						retour = EOF;
+						
+					return retour;
+				}
+			\end{lstlisting}
+			
+						
+			\begin{lstlisting}
+				int myGetCharBuffer (int fd) 
+				{
+					// on effectue un read une fois que tous les MAX caractères sont lus, et on mémorise la tête de lecture pour lire un caractère  
+					
+					// variables static qui ne se réinitialisent pas à chaque appel de la fonction
+					static unsigned char buf[MAX];
+					static int nbCar = 0;	// nombre de caractères dans buf
+					static char* p;	// tête de lecture
+					
+					int retour; 
+					
+					// on fait un read si le buffer est vide
+					if ( nbCarac == 0 ) {
+						nbCarac = read(fd, buf, MAX);
+						p = buf;
+					}
+					
+					// si le buffer contient des caractères, on en lit le premier
+					if ( nbCarac > 0)
+						retour = *p;	// valeur à la tête de lecture
+					else 
+						retour = EOF;	// plus rien à lire
+						
+					nbCarac--;
+					p++;	// on avance la tête de lecture
+						
+					return retour;
+				}
+			\end{lstlisting}
+		
+		
+		
+		
+		
+		
 		
 		
 	
