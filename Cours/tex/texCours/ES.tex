@@ -1,7 +1,72 @@
 \section{Entrées / Sorties}
-
-	\subsection{Entrées / Sorties standard }
+	Les entrées / sorties traitent des données qu'on peut lire ou écrire à partir de fichiers. Il existe 2 niveaux de gestion des entrées / sorties et fichiers :
+	\begin{itemize}
+		\item Entrées / sorties effectuées immédiatement (avec des appels-systèmes)
+		\item Entrées / sorties où les données sont mises en mémoire temporaire \textbf{\textit{buffer}} (avec des fonctions standard)
+	\end{itemize}
 	
-	\subsection{Entrées / Sorties système }
-	
+	\subsection{Entrées / Sorties standard}
+		Toutes les fonctions décrites ici sont déclarées dans la bibliothèque \lstinline!stdio.h!.
+		
+		\noindent\paragraph{}\textbf{Ouvrir et fermer un fichier :}
+			
+			\begin{lstlisting}
+				FILE* fopen(const char* nomDuFichier, const char* modeOuverture);
+				// renvoie NULL si l'ouverture échoue
+				
+				int fclose(FILE* pointeurSurFichier);
+				// renvoie 0 si la fermeture réussit, EOF sinon
+			\end{lstlisting}
+		
+		\noindent\paragraph{}\textbf{Écrire dans un fichier :}
+		
+			\begin{lstlisting}
+				int fputc(int caractere, FILE* pointeurSurFichier);
+				// écrit un seul caractère à la fois dans le fichier
+				
+				char* fputs(const char* chaine, FILE* pointeurSurFichier);
+				// écrit une chaîne dans le fichier
+				
+				int fprintf(FILE* pointeurDeFichier, const char *format, ...); 
+				// écrit une chaîne formatée dans le fichier, fonctionnement quasi-identique à printf
+				
+				// retournent EOF si écriture échoue
+			\end{lstlisting}
+			
+		\noindent\paragraph{}\textbf{Lire à partir d'un fichier :}
+		
+			\begin{lstlisting}
+				int fgetc(FILE* pointeurDeFichier);
+				// lit un caractère, et avance la tête de lecture
+				// retourne le caractère lu ou EOF sinon
+				
+				char* fgets(char* chaine, int nbreDeCaracteresALire, FILE* pointeurSurFichier);
+				// lit au maximum une ligne et s'arrête au premier \lstinline!\n!
+				// <nbreDeCaracteresALire> : pour s'arrêter le lire avant la fin de ligne, sert à définir une taille max
+				// retourne NULL si elle ne peut rien lire
+				
+				int fscanf(FILE* pointeurDeFichier, const char *format, ...);
+				// écrit une chaîne formatée
+			\end{lstlisting}
+			
+		\noindent\paragraph{}\textbf{Se déplacer dans un fichier :} la tête de lecture est une sorte de curseur virtuel dans un fichier qui indique la position de lecture / écriture actuelle.
+		
+			\begin{lstlisting}
+				long ftell(FILE* pointeurSurFichier);
+				// indique la position actuelle dans le fichier
+				
+				int fseek(FILE* pointeurSurFichier, long deplacement, int origine);
+				// déplace le curseur de <deplacement> caractères à partir de la position <origine>
+				// <deplacement> peut être positif (en avant), 0 ou négatif (en arrière)
+				// <origine> peut prendre les constantes SEEK_SET (début), SEEK_CUR (actuelle) ou SEEK_END (fin)
+				
+				void rewind(FILE* pointeurSurFichier);
+				// retour au début
+			\end{lstlisting}
+			
+		
+	\subsection{Entrées / Sorties système}
+		Les fonctions d'entrée / sortie système sont des appels-systèmes communiquant directement avec le noyeau. Les fonctions d'entrée / sortie standard font eux-même appel à ces fonctions système.
+		
+		
 	
