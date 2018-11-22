@@ -1,1 +1,222 @@
 \section{Les threads}
+
+	\subsection{Definitions}
+		Un \textbf{thread} ou \textbf{fil (d'exécution)} ou \textbf{tâche} (aussi processus léger) représente, comme un processus, l'exécution d'un ensemble d'instructions du langage machine d'un processeur. Du point de vue de l'utilisateur, ces exécutions semblent se dérouler en parallèle. Toutefois, là où chaque processus possède sa propre mémoire virtuelle, les threads d'un même processus se partagent sa mémoire virtuelle. Par contre, tous les threads possèdent leur propre pile d'exécution.
+		
+		\paragraph{} Dans la plupart des systèmes d'exploitation, chaque processus possède un espace d'adressage et un thread de contrôle unique, le thread principal. Du point de vue programmation, ce dernier exécute le main.\\
+		En général, le système réserve un processus à chaque application, sauf quelques exceptions. Beaucoup de programmes exécutent plusieurs activités en parallèle, du moins en pseudo-parallélisme. Comme à l'échelle des processus, certaines de ces activités peuvent se bloquer, et ainsi réserver ce blocage à un seul thread séquentiel, permettant par conséquent de ne pas stopper toute l'application.\\
+		Le principal avantage des threads par rapport aux processus, c'est la facilité et la rapidité de leur création. En effet, tous les threads d'un même processus partagent le même espace d'adressage, et donc toutes les variables. Cela évite donc l'allocation de tous ces espaces lors de la création, et il est à noter que, sur de nombreux systèmes, la création d'un thread est environ cent fois plus rapide que celle d'un processus.\\
+		Au-delà de la création, la superposition de l'exécution des activités dans une même application permet une importante accélération quant au fonctionnement de cette dernière.
+	
+	\section{Manipulation des thread en C}
+		
+		\paragraph{Compilation :} toutes les fonctions relatives aux threads sont incluses dans le fichier d'en-tête \lstinline!<pthread.h>! et dans la bibliothèque \lstinline!libpthread.a!. Il faut donc utiliser l'option \lstinline!-lpthread! à la compilation.
+		
+		\subsection{Création et suppression de threads}
+			
+			\subsubsection*{Créer un thread :}
+				Pour créer un thread, il faut déjà déclarer une variable le représentant. Celle-ci sera de type \lstinline!pthread_t\lstinline!. Ensuite, pour créer la tâche elle-même, il suffit d'utiliser la fonction :
+				\begin{lstlisting}
+					#include <pthread.h>
+
+					int pthread_create(pthread_t* thread, pthread_attr_t * attr, void* (*start_routine) (void*), void* arg);
+				\end{lstlisting}
+
+				\begin{itemize}
+					\item retour : 0 si la création a été réussie ou une autre valeur si il y a eu une erreur
+					\item \lstinline!thread! : pointeur vers l'identifiant du thread à créer
+					\item \lstinline!attr! : attributs du thread, possible de mettre le thread en état joignable (NULL par défaut) ou détaché, et choisir sa politique d'ordonnancement (usuelle, temps-réel...)
+					\item \lstinline!(*start_routine) (void*)! : pointeur vers la fonction à exécuter dans le thread, de la forme \lstinline!void* fonction(void* arg)! et contiendra le code à exécuter par le thread
+					\item \lstinline!arg! : l'argument à passer au thread
+				\end{itemize}
+				
+			\subsubsection*{Supprimer un thread :}
+				\begin{lstlisting}
+					#include <pthread.h>
+
+					void pthread_exit(void* ret);
+				\end{lstlisting}
+				Prend en argument la valeur qui doit être retournée par le thread, et doit être placée en dernière position dans la fonction concernée.
+				
+			\subsubsection*{Attendre la fin d'un thread :}
+				Le thread principal n'attendra pas que le thread créé termine de s'exécuter. On la fonction \lstinline!pthread_join! pour cela.
+				\begin{lstlisting}
+					#include <pthread.h>
+
+					int pthread_join(pthread_t th, void **thread_return);
+				\end{itemize}
+				Elle prend en premier paramètre l'identifiant du thread et son second paramètre, un pointeur, permet de récupérer la valeur retournée par la fonction dans laquelle s'exécute le thread (c'est-à-dire l'argument de \lstinline!pthread_exit!).
+
+			\subsubsection*{Exemple :}
+				\begin{lstlisting}
+					#include <stdio.h>
+					#include <stdlib.h>
+					#include <unistd.h>
+					#include <pthread.h>
+
+					void* thread_1(void *arg)
+					{
+						printf("Nous sommes dans le thread.\n");
+
+						/* Pour enlever le warning */
+						(void) arg;
+						pthread_exit(NULL);
+					}
+
+					int main(void)
+					{
+						pthread_t thread1;
+
+						printf("Avant la création du thread.\n");
+
+						if (pthread_create(&thread1, NULL, thread_1, NULL)) 
+						{
+							perror("pthread_create");
+							return EXIT_FAILURE;
+						}
+						
+						// on attend que le thread s'exécute
+						if (pthread_join(thread1, NULL)) 
+						{
+							perror("pthread_join");
+							return EXIT_FAILURE;
+						}
+
+						printf("Après la création du thread.\n");
+
+						return EXIT_SUCCESS;
+					}
+					
+					// Affiche uniformément :
+					// Avant la création du thread.
+					// Nous sommes dans le thread.
+					// Après la création du thread.
+				\end{lstlisting}
+				
+				
+		\subsection{Exclusions mutuelles - mutex}
+			Avec les threads, toutes les variables sont partagées (mémoire partagée). Cela pose des problèmes quand deux threads cherchent à modifier deux variables en même temps. Les mutex est mécanisme de synchronisation, un des outils permettant l'exclusion mutuelle.
+			
+			\paragraph{} Un \textbf{mutex} en C est une variable de type \lstinline!pthread_mutex_t!. Elle va nous servir de verrou, pour nous permettre de protéger des données. Ce verrou peut donc prendre deux états : disponible et verrouillé.\\
+			Quand un thread a accès à une variable protégée par un mutex, on dit qu'il tient le mutex. Il ne peut y avoir qu'un seul thread qui tient le mutex en même temps.
+			
+			Le mutex soit accessible en même temps que la variable et dans tout le fichier (vu que différents threads s'exécutent dans différentes fonctions). La solution la plus simple consiste à déclarer les mutex en variable globale.
+
+			\subsubsection*{Initialiser un mutex :}
+				On initialise un mutex avec la valeur de la constante \lstinline!PTHREAD_MUTEX_INITIALIZER!, déclarée dans \lstinline!pthread.h!.
+				\begin{lstlisting}
+					#include <pthread.h>
+
+					pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+				\end{lstlisting}
+
+			\subsubsection*{Verrouiller un mutex :}
+				L'étape suivante consiste à établir une \textbf{zone critique}, c'est-à-dire la zone où plusieurs threads risquent de modifier ou de lire une même variable en même temps. On verrouille donc le mutex pour éviter ce risque.
+				\begin{lstlisting}
+					#include <pthread.h>
+
+					int pthread_mutex_lock(pthread_mutex_t *mut);
+				\end{lstlisting}
+
+			\subsubsection*{Déverrouiller un mutex :}
+				À la fin de la zone critique, il suffit de déverrouiller le mutex.
+				\begin{lstlisting}
+					#include <pthread.h>
+
+					int pthread_mutex_unlock(pthread_mutex_t *mut);
+				\end{lstlisting}
+
+			\subsubsection*{Détruire un mutex :}
+				Une fois le travail du mutex terminé, on peut le détruire.
+				\begin{lstlisting}
+					#include <pthread.h>
+
+					int pthread_mutex_destroy(pthread_mutex_t *mut);
+				\end{lstlisting}
+				
+			\subsubsection*{Les conditions :}
+				Lorsqu'un thread doit patienter jusqu'à ce qu'un événement survienne dans un autre thread, on utilise les conditions.\\
+				Quand un thread est en attente d'une condition, il reste bloqué tant que celle-ci n'est pas réalisée par un autre thread.\\
+				Comme avec les mutex, on déclare la condition en variable globale :
+				\begin{lstlisting}
+					pthread_cond_t nomCondition = PTHREAD_COND_INITIALIZER;
+				\end{lstlisting}
+				Pour attendre une condition, il faut utiliser un mutex :
+				\begin{lstlisting}
+					int pthread_cond_wait(pthread_cond_t *nomCondition, pthread_mutex_t *nomMutex);
+				\end{lstlisting}
+				Pour réveiller un thread en attente d'une condition, on utilise la fonction :
+				\begin{lstlisting}
+					int pthread_cond_signal(pthread_cond_t *nomCondition);
+				\end{lstlisting}		
+				
+			\subsubsection*{Exemple :}
+				Créez un code qui crée deux threads : un qui incrémente une variable compteur par un nombre tiré au hasard entre 0 et 10, et l'autre qui affiche un message lorsque la variable compteur dépasse 20.
+				
+				\begin{lstlisting}
+					#include <stdio.h>
+					#include <stdlib.h>
+					#include <pthread.h>
+
+					pthread_cond_t condition = PTHREAD_COND_INITIALIZER; /* Création de la condition */
+					pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER; /* Création du mutex */
+
+					void* threadAlarme (void* arg);
+					void* threadCompteur (void* arg);
+
+					int main (void)
+					{
+						pthread_t monThreadCompteur;
+						pthread_t monThreadAlarme;
+
+						pthread_create (&monThreadCompteur, NULL, threadCompteur, (void*)NULL);
+						pthread_create (&monThreadAlarme, NULL, threadAlarme, (void*)NULL); /* Création des threads */
+
+						pthread_join (monThreadCompteur, NULL);
+						pthread_join (monThreadAlarme, NULL); /* Attente de la fin des threads */
+
+						return 0;
+					}
+
+					void* threadCompteur (void* arg)
+					{
+						int compteur = 0, nombre = 0;
+						
+						srand(time(NULL));
+
+						while(1) /* Boucle infinie */
+						{
+							nombre = rand()%10; /* On tire un nombre entre 0 et 10 */
+							compteur += nombre; /* On ajoute ce nombre à la variable compteur */
+
+							printf("\n%d", compteur);
+							
+							if(compteur >= 20) /* Si compteur est plus grand ou égal à 20 */
+							{
+								pthread_mutex_lock (&mutex); /* On verrouille le mutex */
+								pthread_cond_signal (&condition); /* On délivre le signal : condition remplie */
+								pthread_mutex_unlock (&mutex); /* On déverrouille le mutex */
+
+								compteur = 0; /* On remet la variable compteur à 0 */
+							}
+
+							sleep (1); /* On laisse 1 seconde de repos */
+						}
+						
+						pthread_exit(NULL); /* Fin du thread */
+					}
+
+					void* threadAlarme (void* arg)
+					{
+						while(1) /* Boucle infinie */
+						{
+							pthread_mutex_lock(&mutex); /* On verrouille le mutex */
+							pthread_cond_wait (&condition, &mutex); /* On attend que la condition soit remplie */
+							printf("\nLE COMPTEUR A DÉPASSÉ 20."); 
+							pthread_mutex_unlock(&mutex); /* On déverrouille le mutex */
+						}
+						
+						pthread_exit(NULL); /* Fin du thread */
+					}
+
+				\end{lstlisting}
