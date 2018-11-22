@@ -8,7 +8,7 @@
 		\subsubsection*{Les flux standards :}
 			Il existe 3 flux standards qui régissent l'utilisation d'un processus d'un programme écrit en C.
 			
-			\paragraph{} Les flux peuvent être représentés comme des canaux dans lesquels circulent des informations. Dans l'informatique moderne, ces flux sont représentés par l'abstraction de base du disque dur : le fichier. Ainsi, tout ce qui sera écrit dans un des flux sera écrit dans le fichier associé. À l'origine modélisés sur des systèmes d'exploitation de type UNIX , cette technique s'est largement généralisée auprès des systèmes d'exploitation modernes. D'une manière plus générale, on peut associer la notion de flux à d'autres flux plus renommés : flux RSS, flux de paquets, etc.
+			\paragraph{} Les flux peuvent être représentés comme des canaux dans lesquels circulent des informations. Dans l'informatique moderne, ces flux sont représentés par l'abstraction de base du disque dur : le fichier. Ainsi, tout ce qui sera écrit dans un des flux sera écrit dans le fichier associé. À l'origine modélisés sur des systèmes d'exploitation de type UNIX, cette technique s'est largement généralisée auprès des systèmes d'exploitation modernes. D'une manière plus générale, on peut associer la notion de flux à d'autres flux plus renommés : flux RSS, flux de paquets, etc.
 			
 			\paragraph{} En programmation, l'utilité principale des flux réside dans les entrées/sorties. On distingue trois flux standards : 
 			\begin{itemize}
@@ -71,7 +71,7 @@
 			
 			\paragraph{} La bibliothèque standard ne définit que trois codes d'erreur : \textbf{\textit{EDOM}} (passage en paramètre en dehors du domaine attendu), \textbf{\textit{ERANGE}} (résultat trop grand ou trop petit) et \textbf{\textit{EILSEQ}} (erreur de transcodage). Cependant, les systèmes d'exploitation communs et actuels proposent souvent certaines extensions au contenu de \lstinline!errno!. La norme \textbf{\textit{POSIX}} définit par exemple une trentaine de constantes numériques supplémentaires.
 			
-			\paragraph{} Il est donc difficile d'associer directement le contenu de \lstinline!errno! à des codes d'erreur, car la portabilité risque de nous faire défaut. C'est pourquoi la bibliothèque standard de C met à disposition deux fonctions qui interprètent le contenu de \lstinline!errno!, évitant ainsi de passer par un code non standard, ou bien considérablement allongé.
+			\paragraph{} Il est donc difficile d'associer directement le contenu de \lstinline!errno! à des codes d'erreur, car la portabilité risque de faire défaut. C'est pourquoi la bibliothèque standard de C met à disposition deux fonctions qui interprètent le contenu de \lstinline!errno!, évitant ainsi de passer par un code non standard, ou bien considérablement allongé.
 			
 			\paragraph{La fonction \lstinline!strerror! :} associe au code d'erreur passé en paramètre une description de celui-ci.
 				\begin{lstlisting}

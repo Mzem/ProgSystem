@@ -1,31 +1,50 @@
+\documentclass[a4paper,12pt]{article}
 \input{../preambule}
-\usepackage[right=3cm, left=3cm, bottom=3cm, top=2.2cm, footskip=1.5cm,]{geometry}
+\setlength{\parindent}{0pt}
+\usepackage[right=3.2cm, left=3.2cm, bottom=3.5cm, top=3cm, footskip=1.5cm,]{geometry}
 
-\title{\textbf{\Huge Programmation système}}
+\title{\textbf{Programmation système}}
 \author{
 	Steve Alabi - Taha Bendjeddou - Younes Benyamna - Malek Zemni
 	\vspace{1em}\\
 	Feuille d'exercices
 	\vspace{0.5em}
 }
+\linespread{1.35}	
 
 \begin{document}
 \maketitle
 
-	\section*{Exercice 1}
+	\subsection*{Exercice 1} 
+	\textit{(définitions générales, gestion de flux et entrées / sorties)}
+	\\~\\
+	1/ Définir précisément un appel-système. Comment s'exécutent-ils ?\\ 
+	2/ En quoi la redirection de flux peut-elle servir dans la gestion d'erreurs ? \\
+	3/ Écrire une fonction \lstinline!myGetChar! analogue à la fonction \lstinline!fgetc! (lecture d'un seul caractère à partir d'un fichier) en utilisant uniquement des appels-systèmes.\\
+	4.1/ Définir un buffer. \\
+	4.2/ Expliquer comment construire une version bufferisée de la fonction \lstinline!myGetChar!.\\
+	4.3/ Écrire la fonction \lstinline!myGetChar! bufferisée.
 	
+	\subsection*{Exercice 2} 
+	\textit{(processus)}
+	\\~\\
+	1/ Quelle est la particularité des processus sous les systèmes UNIX ?\\
+	2/ Donner une légende correspondant aux numéros (1, 2, 3 et 4) de la figure suivante :
+	\begin{center}\includegraphics[scale=0.4]{../img/process.png}\end{center}
+	3/ Définir un processus zombie. Quelle est l'utilité de la fonction \lstinline!wait! ?\\
+	4/ Lors de la création d'un nouveau processus, quelles ressources sont dupliquées et lesquelles sont partagées ?\\
+	5/ Écrire un programme qui crée un processus et qui affiche un message différents pour chaque processus (en incluant la gestion d'erreurs). 
 	
-	1/ Différence appel système 
-	
-	2/ Comment s'effectue la gestion d'erreurs ? 
-	
-	3/ Écrire une fonction analogue à la fonction fgetc (lecture d'un seul caractère à partir d'un fichier) en utilisant uniquement des appels systèmes.
-	
-	4/ a. Définir un buffer. 
-		b. Expliquer comment construire une version bufferisée de la fonction myGetChar.
-		c . Écrire la fonction myGetChar bufferisée.
-	
-	\section*{Exercice 2}
-	
-	
+	\subsection*{Exercice 3} 
+	\textit{(threads)}
+	\\~\\
+	1/ Quelle est la différence entre un processus et un thread ? Quel est l'avantage des threads ?\\
+	2/ Écrire un programme ayant le comportement suivant :
+	\begin{itemize}
+		\item des threads sont créés (leur nombre étant passé en paramètre lors du lancement du programme)
+		\item chaque thread affiche un message (par exemple "hello world !") et son PID
+		\item le thread principal attend la terminaison des différents threads créés
+	\end{itemize}
+	3/ Définir un mutex et donner son rôle.\\
+	4/ Écrire un programme qui crée deux threads : un qui incrémente une variable compteur par un nombre tiré au hasard entre 0 et 10, et l'autre qui affiche un message lorsque la variable compteur dépasse 20 (utiliser mutex et conditions).
 \end{document}
